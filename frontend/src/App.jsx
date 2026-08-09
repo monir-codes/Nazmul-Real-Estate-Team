@@ -16,6 +16,7 @@ import AreasWeServe from './pages/AreasWeServe';
 import AdminLogin from './pages/Admin/Login';
 import AdminProperties from './pages/Admin/Properties';
 import AdminLeads from './pages/Admin/Leads';
+import HeroSettings from './pages/Admin/HeroSettings';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="properties" element={<AdminProperties />} />
           <Route path="leads" element={<AdminLeads />} />
+          <Route path="hero" element={<HeroSettings />} />
           <Route path="team" element={<div>Manage Team</div>} />
         </Route>
       </Routes>

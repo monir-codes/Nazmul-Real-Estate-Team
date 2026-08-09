@@ -1,5 +1,5 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare } from 'lucide-react';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare, Image as ImageIcon } from 'lucide-react';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
