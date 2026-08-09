@@ -11,6 +11,7 @@ import Valuation from './pages/Valuation';
 import Contact from './pages/Contact';
 import About from './pages/About';
 import Team from './pages/Team';
+import AreasWeServe from './pages/AreasWeServe';
 
 import AdminLogin from './pages/Admin/Login';
 import AdminProperties from './pages/Admin/Properties';
@@ -30,6 +31,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/areas" element={<AreasWeServe />} />
         </Route>
 
         {/* Admin Login (No Sidebar) */}

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Globe, Mail, Phone, MapPin } from 'lucide-react';
+import { Globe, Mail, Phone, MapPin } from 'lucide-react'; // Trigger cache invalidation
 
 const Footer = () => {
   return (

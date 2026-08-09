@@ -7,10 +7,12 @@ const Sell = () => {
       {/* Hero */}
       <div className="bg-primary text-white py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1600&q=80')] bg-cover bg-center opacity-20" />
-        <div className="container-custom relative z-10 text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6">Maximize Your Home's Value</h1>
-          <p className="text-xl text-gray-300 mb-8">We use data-driven pricing, premium presentation, and aggressive marketing to sell your home for top dollar.</p>
-          <Link to="/valuation" className="btn-accent text-lg">Get A Home Valuation</Link>
+        <div className="container-custom relative z-10 flex justify-center max-w-5xl mx-auto">
+          <div className="bg-black/40 backdrop-blur-md p-10 md:p-16 rounded-2xl border border-white/10 shadow-2xl text-center">
+            <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-accent drop-shadow-lg">Maximize Your Home's Value</h1>
+            <p className="text-xl text-white mb-8 max-w-3xl mx-auto drop-shadow-md font-medium">We use data-driven pricing, premium presentation, and aggressive marketing to sell your home for top dollar.</p>
+            <Link to="/valuation" className="btn-accent text-lg">Get A Home Valuation</Link>
+          </div>
         </div>
       </div>
 
