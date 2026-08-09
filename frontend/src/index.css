@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1a202c;
+  --color-primary-light: #2d3748;
+  --color-accent: #d4af37;
+  --color-accent-hover: #b5952f;
+  --color-surface: #f7fafc;
+  --color-surface-dark: #e2e8f0;
+  --color-background: #fffdfa;
+
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Playfair Display", serif;
+
+  --shadow-premium: 0 10px 40px -10px rgba(0,0,0,0.08);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    color: var(--color-primary);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-md font-medium transition-colors hover:bg-primary-light shadow-premium;
+  }
+  
+  .btn-secondary {
+    @apply bg-transparent border border-primary text-primary px-6 py-3 rounded-md font-medium transition-colors hover:bg-surface-dark;
+  }
+  
+  .btn-accent {
+    @apply bg-accent text-white px-6 py-3 rounded-md font-medium transition-colors hover:bg-accent-hover shadow-premium;
+  }
+  
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+  
+  .container-custom {
+    @apply container mx-auto px-4 md:px-6 max-w-7xl;
+  }
+}

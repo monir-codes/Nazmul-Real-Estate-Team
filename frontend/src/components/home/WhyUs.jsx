@@ -1,0 +1,59 @@
+import { Award, Target, MessageSquare, Handshake, MonitorSmartphone } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const REASONS = [
+  {
+    icon: <Target className="w-8 h-8 text-accent" />,
+    title: 'Local Expertise',
+    description: 'Deep, nuanced understanding of the local market trends, neighborhoods, and hidden opportunities.'
+  },
+  {
+    icon: <MessageSquare className="w-8 h-8 text-accent" />,
+    title: 'Strategic Guidance',
+    description: 'Clear, objective advice throughout every step of the transaction, ensuring you make informed decisions.'
+  },
+  {
+    icon: <Handshake className="w-8 h-8 text-accent" />,
+    title: 'Strong Negotiation',
+    description: 'Fierce advocacy and professional representation to secure the best terms from offer to closing.'
+  },
+  {
+    icon: <MonitorSmartphone className="w-8 h-8 text-accent" />,
+    title: 'Modern Marketing',
+    description: 'High-quality digital presentation and targeted marketing that reaches the right audience.'
+  }
+];
+
+const WhyUs = () => {
+  return (
+    <section className="section-padding bg-primary text-white">
+      <div className="container-custom">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-serif font-bold mb-4">Why Choose Nazmul Real Estate</h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            We don't just facilitate transactions; we build relationships and deliver results through a commitment to excellence and integrity.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {REASONS.map((reason, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white/5 border border-white/10 p-8 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <div className="mb-6">{reason.icon}</div>
+              <h3 className="text-xl font-bold mb-3">{reason.title}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{reason.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default WhyUs;

@@ -1,0 +1,15 @@
+{
+  "name": "nazmul-real-estate",
+  "version": "1.0.0",
+  "description": "Premium real estate website",
+  "scripts": {
+    "start": "node backend/server.js",
+    "server": "npm run dev --prefix backend",
+    "client": "npm run dev --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
