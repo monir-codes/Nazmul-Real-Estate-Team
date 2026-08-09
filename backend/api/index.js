@@ -40,8 +40,6 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/hero', heroRoutes);
 
-const PORT = process.env.PORT || 5000;
-
 // Only listen locally, Vercel will use the exported app
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
