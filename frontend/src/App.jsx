@@ -19,6 +19,7 @@ import AdminProperties from './pages/Admin/Properties';
 import AdminLeads from './pages/Admin/Leads';
 import HeroSettings from './pages/Admin/HeroSettings';
 import AdminSettings from './pages/Admin/Settings';
+import AdminTeam from './pages/Admin/Team';
 import PageTransition from './components/PageTransition';
 
 function App() {
@@ -50,7 +51,7 @@ function App() {
           <Route path="leads" element={<AdminLeads />} />
           <Route path="hero" element={<HeroSettings />} />
           <Route path="settings" element={<AdminSettings />} />
-          <Route path="team" element={<div>Manage Team</div>} />
+          <Route path="team" element={<AdminTeam />} />
         </Route>
       </Routes>
     </AnimatePresence>

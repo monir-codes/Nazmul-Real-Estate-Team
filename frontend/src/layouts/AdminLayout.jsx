@@ -1,13 +1,23 @@
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare, Image as ImageIcon } from 'lucide-react';
+import { Outlet, Link, useNavigate, NavLink, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare, Image as ImageIcon, Building2, UserPlus } from 'lucide-react';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
-    // Basic logout placeholder
+    localStorage.removeItem('adminToken');
     navigate('/admin/login');
   };
+
+  const navItems = [
+    { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+    { name: 'Properties', path: '/admin/properties', icon: Building2 },
+    { name: 'Leads (CRM)', path: '/admin/leads', icon: Users },
+    { name: 'Hero Settings', path: '/admin/hero', icon: ImageIcon },
+    { name: 'Page Builder', path: '/admin/settings', icon: Settings },
+    { name: 'Manage Team', path: '/admin/team', icon: UserPlus },
+  ];
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -20,22 +30,20 @@ const AdminLayout = () => {
         </div>
         
         <nav className="flex-1 px-4 space-y-2 mt-4">
-          <Link to="/admin/dashboard" className="flex items-center space-x-3 px-4 py-3 bg-white/10 rounded-md transition-colors">
-            <LayoutDashboard className="w-5 h-5 text-accent" />
-            <span>Dashboard</span>
-          </Link>
-          <Link to="/admin/properties" className="flex items-center space-x-3 px-4 py-3 hover:bg-white/5 rounded-md transition-colors">
-            <Home className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-300">Properties</span>
-          </Link>
-          <Link to="/admin/leads" className="flex items-center space-x-3 px-4 py-3 hover:bg-white/5 rounded-md transition-colors">
-            <MessageSquare className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-300">Leads & Contacts</span>
-          </Link>
-          <Link to="/admin/team" className="flex items-center space-x-3 px-4 py-3 hover:bg-white/5 rounded-md transition-colors">
-            <Users className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-300">Team</span>
-          </Link>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `flex items-center space-x-3 px-4 py-3 rounded-md transition-colors ${
+                  isActive ? 'bg-white/10 text-white' : 'hover:bg-white/5 text-gray-300'
+                }`
+              }
+            >
+              <item.icon className={`w-5 h-5 ${location.pathname === item.path ? 'text-accent' : 'text-gray-400'}`} />
+              <span>{item.name}</span>
+            </NavLink>
+          ))}
         </nav>
         
         <div className="p-4 border-t border-white/10">
