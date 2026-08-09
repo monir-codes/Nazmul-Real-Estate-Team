@@ -4,11 +4,12 @@ const About = () => {
   return (
     <div className="pt-24 min-h-screen">
       <div className="bg-primary text-white py-20 relative overflow-hidden">
-        <div className="container-custom relative z-10 flex justify-center max-w-4xl mx-auto">
-          <div className="bg-black/40 backdrop-blur-md p-10 md:p-16 rounded-2xl border border-white/10 shadow-2xl text-center w-full">
-            <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-accent drop-shadow-lg">Our Story</h1>
-            <p className="text-xl text-white drop-shadow-md font-medium">Dedicated to excellence, integrity, and achieving exceptional results for our clients.</p>
-          </div>
+        {/* Elegant Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/80 z-10" />
+        
+        <div className="container-custom relative z-20 text-center max-w-4xl mx-auto pt-10">
+          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-accent drop-shadow-2xl">Our Story</h1>
+          <p className="text-xl text-white drop-shadow-md font-medium">Dedicated to excellence, integrity, and achieving exceptional results for our clients.</p>
         </div>
       </div>
 

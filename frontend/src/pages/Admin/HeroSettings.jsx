@@ -1,34 +1,51 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Plus, Image as ImageIcon } from 'lucide-react';
+import api from '../../utils/api';
 
 const HeroSettings = () => {
-  const [images, setImages] = useState([
-    { _id: '1', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1600&q=80', title: 'Modern Villa' },
-    { _id: '2', url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80', title: 'Luxury Estate' },
-    { _id: '3', url: 'https://images.unsplash.com/photo-1613490908679-fd36113c2300?w=1600&q=80', title: 'Contemporary Design' }
-  ]);
+  const [images, setImages] = useState([]);
   const [newUrl, setNewUrl] = useState('');
   const [newTitle, setNewTitle] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // In a real app, you would fetch these from /api/hero
+  useEffect(() => {
+    fetchImages();
+  }, []);
 
-  const handleAdd = (e) => {
+  const fetchImages = async () => {
+    try {
+      const res = await api.get('/hero');
+      setImages(res.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch hero images', error);
+      setLoading(false);
+    }
+  };
+
+  const handleAdd = async (e) => {
     e.preventDefault();
     if (!newUrl) return;
     
-    const newImage = {
-      _id: Date.now().toString(),
-      url: newUrl,
-      title: newTitle || 'Untitled Image'
-    };
-    
-    setImages([newImage, ...images]);
-    setNewUrl('');
-    setNewTitle('');
+    try {
+      const res = await api.post('/hero', { url: newUrl, title: newTitle });
+      setImages([res.data, ...images]);
+      setNewUrl('');
+      setNewTitle('');
+    } catch (error) {
+      console.error('Failed to add image', error);
+      alert('Failed to add image. Ensure URL is valid.');
+    }
   };
 
-  const handleDelete = (id) => {
-    setImages(images.filter(img => img._id !== id));
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this image?')) return;
+    try {
+      await api.delete(`/hero/${id}`);
+      setImages(images.filter(img => img._id !== id));
+    } catch (error) {
+      console.error('Failed to delete image', error);
+    }
   };
 
   return (

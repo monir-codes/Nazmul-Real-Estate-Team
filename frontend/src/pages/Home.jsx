@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import api from '../utils/api';
 
 import FeaturedListings from '../components/home/FeaturedListings';
 import BuyWithUs from '../components/home/BuyWithUs';
@@ -17,11 +18,26 @@ const Home = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [heroImages, setHeroImages] = useState(DEFAULT_HERO_IMAGES);
 
+  // Fetch dynamic images from API
+  useEffect(() => {
+    const fetchHeroImages = async () => {
+      try {
+        const res = await api.get('/hero');
+        if (res.data && res.data.length > 0) {
+          setHeroImages(res.data.map(img => img.url));
+        }
+      } catch (err) {
+        console.error("Failed to fetch hero images", err);
+      }
+    };
+    fetchHeroImages();
+  }, []);
+
   // Auto-slide effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-    }, 5000); // Change image every 5 seconds
+    }, 5000); 
     return () => clearInterval(interval);
   }, [heroImages]);
 
