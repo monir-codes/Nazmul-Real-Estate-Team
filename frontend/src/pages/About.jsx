@@ -1,54 +1,105 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Award, Target, Users, BookOpen } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import Loader from '../components/Loader';
+import api from '../utils/api';
 
 const About = () => {
+  const [pageData, setPageData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/settings');
+        setPageData(res.data.about);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  if (loading || !pageData) return <Loader />;
+
   return (
-    <div className="pt-24 min-h-screen">
+    <div className="pt-24 min-h-screen bg-gray-50">
       <SEO 
-        title="About Our Team | Nazmul Real Estate Team"
-        description="Learn more about our award-winning real estate team, our values, and our commitment to helping you achieve your real estate goals."
+        title={`${pageData.title} | Nazmul Real Estate Team`}
+        description={pageData.subtitle}
       />
-      <div className="bg-primary text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1600&q=80')] bg-cover bg-center opacity-30" />
-        {/* Elegant Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/80 z-10" />
+      
+      {/* Cinematic Hero */}
+      <div className="bg-primary text-white h-[50vh] relative overflow-hidden flex flex-col justify-center">
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-70 transform scale-105"
+          style={{ backgroundImage: `url(${pageData.backgroundImage})`, backgroundAttachment: 'fixed' }}
+        />
+        {/* Sleek Left-to-Right Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
         
-        <div className="container-custom relative z-20 flex justify-center max-w-4xl mx-auto pt-10">
-          <div className="bg-black/40 backdrop-blur-md p-10 md:p-16 rounded-2xl border border-white/10 shadow-2xl text-center w-full">
-            <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-accent drop-shadow-2xl">Our Story</h1>
-            <p className="text-xl text-white drop-shadow-md font-medium">Dedicated to excellence, integrity, and achieving exceptional results for our clients.</p>
+        <div className="container-custom relative z-20 pt-10">
+          <div className="max-w-3xl">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: "100px" }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="h-1 bg-accent mb-6"
+            />
+            <motion.h1 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+              className="text-5xl md:text-7xl font-serif font-bold mb-6 text-white drop-shadow-2xl leading-tight"
+            >
+              {pageData.title}
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
+              className="text-xl md:text-2xl text-gray-200 mb-10 drop-shadow-md font-light leading-relaxed max-w-2xl"
+            >
+              {pageData.subtitle}
+            </motion.p>
           </div>
         </div>
       </div>
 
-      <div className="section-padding bg-white">
-        <div className="container-custom max-w-4xl">
-          <div className="prose prose-lg mx-auto text-gray-600">
-            <p className="text-2xl text-primary font-serif mb-8 leading-relaxed">
-              At Nazmul Real Estate Team, we believe that buying or selling a home should be an exciting, empowering experience, not a stressful one.
-            </p>
-            <h3 className="text-2xl font-bold text-primary mb-4">Our Approach</h3>
-            <p className="mb-6">
-              We have built our reputation on a foundation of unyielding integrity, deep market knowledge, and a commitment to personalized service. Every client is unique, and every transaction requires a bespoke strategy.
-            </p>
-            <p className="mb-10">
-              Unlike generic brokerages, we operate as a tight-knit boutique team. When you hire us, you get the collective expertise of dedicated specialists working in harmony to secure the best possible outcome for you.
-            </p>
-
-            <h3 className="text-2xl font-bold text-primary mb-4">Why Clients Choose Us</h3>
-            <ul className="list-disc pl-6 mb-10 space-y-2">
-              <li><strong>Market Mastery:</strong> We analyze data daily to stay ahead of local trends.</li>
-              <li><strong>Fierce Negotiation:</strong> We protect your equity and secure favorable terms.</li>
-              <li><strong>Premium Marketing:</strong> Our listings stand out through high-end presentation.</li>
-              <li><strong>Clear Communication:</strong> You will never be left wondering what happens next.</li>
-            </ul>
-
-            <div className="bg-surface p-8 rounded-xl text-center mt-12">
-              <h4 className="text-xl font-bold text-primary mb-4">Ready to make a move?</h4>
-              <div className="flex justify-center space-x-4">
-                <Link to="/contact" className="btn-primary">Contact Us</Link>
-                <Link to="/team" className="btn-secondary">Meet The Team</Link>
+      {/* Content */}
+      <div className="py-24">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-24">
+            <div className="relative">
+              <div className="absolute inset-0 bg-accent rounded-lg transform translate-x-4 translate-y-4"></div>
+              <img 
+                src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80" 
+                alt="Our Team" 
+                className="relative rounded-lg shadow-xl w-full h-[600px] object-cover"
+              />
+            </div>
+            
+            <div>
+              <h2 className="text-4xl font-serif font-bold text-primary mb-6">Redefining Real Estate Excellence</h2>
+              <p className="text-lg text-gray-600 mb-6">
+                With over a decade of experience in the luxury real estate market, our team has built a reputation for uncompromising integrity, unparalleled market knowledge, and an unrelenting commitment to our clients.
+              </p>
+              <p className="text-lg text-gray-600 mb-8">
+                We believe that buying or selling a home is more than just a transaction—it's a life-changing experience. That's why we take a highly personalized approach, tailoring our strategies to meet your unique needs and goals.
+              </p>
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <div className="text-4xl font-bold text-accent mb-2">$500M+</div>
+                  <div className="text-gray-600 font-medium">Sales Volume</div>
+                </div>
+                <div>
+                  <div className="text-4xl font-bold text-accent mb-2">15+</div>
+                  <div className="text-gray-600 font-medium">Years Experience</div>
+                </div>
               </div>
             </div>
           </div>

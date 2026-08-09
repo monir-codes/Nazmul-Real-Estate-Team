@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import PublicLayout from './layouts/PublicLayout';
 import AdminLayout from './layouts/AdminLayout';
 import Home from './pages/Home';
@@ -17,22 +18,26 @@ import AdminLogin from './pages/Admin/Login';
 import AdminProperties from './pages/Admin/Properties';
 import AdminLeads from './pages/Admin/Leads';
 import HeroSettings from './pages/Admin/HeroSettings';
+import AdminSettings from './pages/Admin/Settings';
+import PageTransition from './components/PageTransition';
 
 function App() {
+  const location = useLocation();
+
   return (
-    <Router>
-      <Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/buy" element={<Buy />} />
-          <Route path="/sell" element={<Sell />} />
-          <Route path="/listings" element={<Listings />} />
-          <Route path="/valuation" element={<Valuation />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/areas" element={<AreasWeServe />} />
+          <Route path="/" element={<PageTransition><Home /></PageTransition>} />
+          <Route path="/buy" element={<PageTransition><Buy /></PageTransition>} />
+          <Route path="/sell" element={<PageTransition><Sell /></PageTransition>} />
+          <Route path="/listings" element={<PageTransition><Listings /></PageTransition>} />
+          <Route path="/valuation" element={<PageTransition><Valuation /></PageTransition>} />
+          <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+          <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+          <Route path="/team" element={<PageTransition><Team /></PageTransition>} />
+          <Route path="/areas" element={<PageTransition><AreasWeServe /></PageTransition>} />
         </Route>
 
         {/* Admin Login (No Sidebar) */}
@@ -44,10 +49,11 @@ function App() {
           <Route path="properties" element={<AdminProperties />} />
           <Route path="leads" element={<AdminLeads />} />
           <Route path="hero" element={<HeroSettings />} />
+          <Route path="settings" element={<AdminSettings />} />
           <Route path="team" element={<div>Manage Team</div>} />
         </Route>
       </Routes>
-    </Router>
+    </AnimatePresence>
   );
 }
 

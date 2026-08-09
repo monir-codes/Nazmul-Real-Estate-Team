@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import api from '../../utils/api';
+import { uploadToImgBB } from '../../utils/imgbb';
 
 const AdminProperties = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     title: '', address: '', city: '', state: '', zip: '', price: '', 
-    beds: '', baths: '', sqft: '', propertyType: 'Single Family', status: 'For Sale', description: ''
+    beds: '', baths: '', sqft: '', propertyType: 'Single Family', status: 'For Sale', description: '', image: ''
   });
 
   useEffect(() => {
@@ -36,16 +38,34 @@ const AdminProperties = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const imageUrl = await uploadToImgBB(file);
+      setFormData({ ...formData, image: imageUrl });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to upload image.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/properties', formData);
+      // Backend expects images array for properties
+      const propertyData = { ...formData, images: formData.image ? [formData.image] : [] };
+      const res = await api.post('/properties', propertyData);
       setProperties([res.data, ...properties]);
       setShowModal(false);
       // Reset form
       setFormData({
         title: '', address: '', city: '', state: '', zip: '', price: '', 
-        beds: '', baths: '', sqft: '', propertyType: 'Single Family', status: 'For Sale', description: ''
+        beds: '', baths: '', sqft: '', propertyType: 'Single Family', status: 'For Sale', description: '', image: ''
       });
     } catch (err) {
       console.error("Failed to create property", err);
@@ -168,6 +188,24 @@ const AdminProperties = () => {
                     <option>Pending</option>
                     <option>Sold</option>
                   </select>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Property Image</label>
+                  <div className="flex items-center space-x-4">
+                    <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md font-medium text-sm transition-colors flex items-center border border-gray-300">
+                      {uploadingImage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageIcon className="w-4 h-4 mr-2" />}
+                      {uploadingImage ? 'Uploading...' : 'Upload Image'}
+                      <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
+                    </label>
+                    <input 
+                      type="text" 
+                      name="image" 
+                      placeholder="Or paste URL here..."
+                      onChange={(e) => setFormData({...formData, image: e.target.value})} 
+                      value={formData.image} 
+                      className="flex-grow border border-gray-300 rounded-md px-3 py-2 outline-none focus:border-accent text-sm" 
+                    />
+                  </div>
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>

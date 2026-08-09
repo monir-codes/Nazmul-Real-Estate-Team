@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { Trash2, Plus, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Plus, Image as ImageIcon, Loader2 } from 'lucide-react';
 import api from '../../utils/api';
+import { uploadToImgBB } from '../../utils/imgbb';
 
 const HeroSettings = () => {
   const [images, setImages] = useState([]);
   const [newUrl, setNewUrl] = useState('');
   const [newTitle, setNewTitle] = useState('');
   const [loading, setLoading] = useState(true);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     fetchImages();
@@ -48,6 +50,23 @@ const HeroSettings = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const imageUrl = await uploadToImgBB(file);
+      const res = await api.post('/hero', { url: imageUrl, title: file.name });
+      setImages([res.data, ...images]);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to upload image. Check VITE_IMGBB_API_KEY.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   return (
     <div className="p-6 md:p-10 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-8">
@@ -55,6 +74,11 @@ const HeroSettings = () => {
           <h1 className="text-3xl font-serif font-bold text-primary mb-2">Hero Slider</h1>
           <p className="text-gray-500">Manage the animated background images on the home page.</p>
         </div>
+        <label className="btn-accent flex items-center cursor-pointer">
+          {uploadingImage ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <ImageIcon className="w-5 h-5 mr-2" />}
+          {uploadingImage ? 'Uploading...' : 'Upload Image'}
+          <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
+        </label>
       </div>
 
       {/* Add New Image Form */}
