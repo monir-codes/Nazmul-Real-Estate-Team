@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Home, DollarSign, Calculator, MapPin } from 'lucide-react';
+import SEO from '../components/SEO';
+import api from '../utils/api';
 
 const Valuation = () => {
   const [formData, setFormData] = useState({
@@ -15,10 +17,22 @@ const Valuation = () => {
 
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Normally we'd send to backend here
-    setSubmitted(true);
+    try {
+      await api.post('/leads', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        type: 'Valuation',
+        propertyAddress: `${formData.address}, ${formData.city}, ${formData.zip}`,
+        message: 'Requested a Home Valuation'
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Failed to submit valuation lead', error);
+      alert('There was an error submitting your request. Please try again.');
+    }
   };
 
   if (submitted) {
@@ -49,6 +63,10 @@ const Valuation = () => {
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">
+      <SEO 
+        title="Free Home Valuation | Nazmul Real Estate Team"
+        description="Find out exactly what your home is worth with our professional, data-driven real estate valuation services."
+      />
       <div className="container-custom py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">What's Your Home Worth?</h1>

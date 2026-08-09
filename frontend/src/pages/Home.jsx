@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import api from '../utils/api';
+import SEO from '../components/SEO';
 
 import FeaturedListings from '../components/home/FeaturedListings';
 import BuyWithUs from '../components/home/BuyWithUs';
@@ -43,6 +44,10 @@ const Home = () => {
 
   return (
     <div className="pt-24">
+      <SEO 
+        title="Nazmul Real Estate Team | Luxury Real Estate & Homes for Sale" 
+        description="Discover luxury homes and premium real estate services with the Nazmul Real Estate Team. We help buyers and sellers navigate the market with expert guidance."
+      />
       {/* Hero Section */}
       <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
         {/* Animated Background Slider */}

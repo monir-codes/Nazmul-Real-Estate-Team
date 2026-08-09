@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
+import api from '../utils/api';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -13,13 +15,31 @@ const Contact = () => {
 
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+    try {
+      await api.post('/leads', {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        type: formData.interest === 'Selling' ? 'Sell' : 
+              formData.interest === 'Property Valuation' ? 'Valuation' : 
+              formData.interest === 'Buying' ? 'Buy' : 'General',
+        message: formData.message
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Failed to submit lead', error);
+      alert('There was an error sending your message. Please try again.');
+    }
   };
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">
+      <SEO 
+        title="Contact Us | Nazmul Real Estate Team"
+        description="Get in touch with the Nazmul Real Estate Team today. Whether you're looking to buy, sell, or have questions about the market, we're here to help."
+      />
       <div className="container-custom py-12">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-primary mb-4">Let's Talk About Your Next Move.</h1>

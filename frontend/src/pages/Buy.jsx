@@ -1,20 +1,27 @@
-import { Search, Compass, ShieldCheck, Map } from 'lucide-react';
+import { Search, MapPin, Home, DollarSign, Key, CheckCircle, Compass, ShieldCheck, Map } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const Buy = () => {
   return (
     <div className="pt-24 min-h-screen">
+      <SEO 
+        title="Buy a Home | Nazmul Real Estate Team"
+        description="Looking to buy a home? Explore premium listings and get expert guidance from the top real estate team."
+      />
       {/* Hero */}
       <div className="bg-primary text-white py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80')] bg-cover bg-center opacity-20" />
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80')] bg-cover bg-center opacity-40" />
         {/* Elegant Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/80 z-10" />
         
-        <div className="container-custom relative z-20 text-center max-w-4xl mx-auto pt-10">
-          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-accent drop-shadow-2xl">Expert Guidance For Buyers</h1>
-          <p className="text-xl text-white mb-8 max-w-3xl mx-auto drop-shadow-md font-medium">From finding the perfect neighborhood to negotiating the best terms, we are with you every step of the way.</p>
-          <Link to="/listings" className="btn-accent text-lg">Start Your Search</Link>
+        <div className="container-custom relative z-20 flex justify-center max-w-5xl mx-auto pt-10">
+          <div className="bg-black/40 backdrop-blur-md p-10 md:p-16 rounded-2xl border border-white/10 shadow-2xl text-center">
+            <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6 text-accent drop-shadow-2xl">Expert Guidance For Buyers</h1>
+            <p className="text-xl text-white mb-8 max-w-3xl mx-auto drop-shadow-md font-medium">From finding the perfect neighborhood to negotiating the best terms, we are with you every step of the way.</p>
+            <Link to="/listings" className="btn-accent text-lg">Start Your Search</Link>
+          </div>
         </div>
       </div>
 

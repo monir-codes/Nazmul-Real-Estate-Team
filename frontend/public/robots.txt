@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nazmul-real-estate-team-3fly.vercel.app/sitemap.xml
