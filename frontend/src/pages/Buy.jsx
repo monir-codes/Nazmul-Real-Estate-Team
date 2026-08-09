@@ -24,7 +24,8 @@ const Buy = () => {
     fetchSettings();
   }, []);
 
-  if (loading || !pageData) return <Loader />;
+  if (loading) return <Loader />;
+  if (!pageData) return <div className="pt-32 text-center text-red-500">Error loading page content.</div>;
 
   return (
     <div className="pt-24 min-h-screen">
