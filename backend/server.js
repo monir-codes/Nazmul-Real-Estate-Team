@@ -16,6 +16,17 @@ app.use(express.json());
 const propertyRoutes = require('./routes/propertyRoutes');
 const leadRoutes = require('./routes/leadRoutes');
 const authRoutes = require('./routes/authRoutes');
+const connectDB = require('./config/db');
+
+// Connect to DB on each request (Serverless friendly)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
 
 // Basic Route
 app.get('/api/health', (req, res) => {
@@ -26,16 +37,6 @@ app.get('/api/health', (req, res) => {
 app.use('/api/properties', propertyRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/auth', authRoutes);
-
-// Database Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/nazmul-real-estate';
-
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('MongoDB successfully connected'))
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
-    // Do not exit process in serverless environments, just log it.
-  });
 
 const PORT = process.env.PORT || 5000;
 
