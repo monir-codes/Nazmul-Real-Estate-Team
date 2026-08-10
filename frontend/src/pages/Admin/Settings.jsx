@@ -102,13 +102,35 @@ const AdminSettings = () => {
   };
 
   const handleCMSArrayChange = (section, arrayField, index, field, value) => {
-    const newArray = [...globalSettings[section][arrayField]];
+    const newArray = [...(globalSettings[section]?.[arrayField] || [])];
     if (field === null) {
-      // For simple string arrays (like sellSection.points)
       newArray[index] = value;
     } else {
-      newArray[index][field] = value;
+      newArray[index] = { ...newArray[index], [field]: value };
     }
+    setGlobalSettings({
+      ...globalSettings,
+      [section]: {
+        ...globalSettings[section],
+        [arrayField]: newArray
+      }
+    });
+  };
+
+  const addCMSArrayItem = (section, arrayField, defaultItem) => {
+    const newArray = [...(globalSettings[section]?.[arrayField] || []), defaultItem];
+    setGlobalSettings({
+      ...globalSettings,
+      [section]: {
+        ...globalSettings[section],
+        [arrayField]: newArray
+      }
+    });
+  };
+
+  const removeCMSArrayItem = (section, arrayField, index) => {
+    const newArray = [...(globalSettings[section]?.[arrayField] || [])];
+    newArray.splice(index, 1);
     setGlobalSettings({
       ...globalSettings,
       [section]: {
@@ -319,15 +341,21 @@ const AdminSettings = () => {
 
               {/* Buy With Us Section */}
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">"Buy With Us" Framework</h3>
+                <div className="flex justify-between items-center mb-4 border-b pb-2">
+                  <h3 className="text-xl font-bold text-gray-800">"Buy With Us" Framework</h3>
+                  <button onClick={() => addCMSArrayItem('buySection', 'steps', { title: 'New Step', desc: '' })} className="text-accent hover:text-accent-hover text-sm font-medium">+ Add Step</button>
+                </div>
                 <div className="space-y-4 mb-4">
                   <input type="text" placeholder="Section Title" value={globalSettings.buySection?.title || ''} onChange={(e) => handleCMSSectionChange('buySection', 'title', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
                   <input type="text" placeholder="Section Subtitle" value={globalSettings.buySection?.subtitle || ''} onChange={(e) => handleCMSSectionChange('buySection', 'subtitle', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
                 </div>
                 <div className="space-y-4 border-l-4 border-accent pl-4">
                   {globalSettings.buySection?.steps?.map((step, idx) => (
-                    <div key={idx} className="space-y-2">
-                      <div className="font-bold text-gray-600 text-sm">Step {idx + 1}</div>
+                    <div key={idx} className="space-y-2 relative">
+                      <div className="flex justify-between items-center">
+                        <div className="font-bold text-gray-600 text-sm">Step {idx + 1}</div>
+                        <button onClick={() => removeCMSArrayItem('buySection', 'steps', idx)} className="text-red-500 hover:text-red-700 text-xs font-medium">Remove</button>
+                      </div>
                       <input type="text" value={step.title} onChange={(e) => handleCMSArrayChange('buySection', 'steps', idx, 'title', e.target.value)} placeholder="Step Title" className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
                       <input type="text" value={step.desc} onChange={(e) => handleCMSArrayChange('buySection', 'steps', idx, 'desc', e.target.value)} placeholder="Step Description" className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent text-sm" />
                     </div>
@@ -337,21 +365,30 @@ const AdminSettings = () => {
 
               {/* Sell With Us Section */}
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">"Sell For Top Dollar" Section</h3>
+                <div className="flex justify-between items-center mb-4 border-b pb-2">
+                  <h3 className="text-xl font-bold text-gray-800">"Sell For Top Dollar" Section</h3>
+                  <button onClick={() => addCMSArrayItem('sellSection', 'points', 'New Point')} className="text-accent hover:text-accent-hover text-sm font-medium">+ Add Point</button>
+                </div>
                 <div className="space-y-4 mb-4">
                   <input type="text" placeholder="Section Title" value={globalSettings.sellSection?.title || ''} onChange={(e) => handleCMSSectionChange('sellSection', 'title', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
                   <input type="text" placeholder="Section Subtitle" value={globalSettings.sellSection?.subtitle || ''} onChange={(e) => handleCMSSectionChange('sellSection', 'subtitle', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
                 </div>
-                <div className="space-y-2 border-l-4 border-accent pl-4">
+                <div className="space-y-3 border-l-4 border-accent pl-4">
                   {globalSettings.sellSection?.points?.map((point, idx) => (
-                    <input key={idx} type="text" value={point} onChange={(e) => handleCMSArrayChange('sellSection', 'points', idx, null, e.target.value)} placeholder={`Bullet Point ${idx + 1}`} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent text-sm" />
+                    <div key={idx} className="flex space-x-3 items-center">
+                      <input type="text" value={point} onChange={(e) => handleCMSArrayChange('sellSection', 'points', idx, null, e.target.value)} placeholder={`Bullet Point ${idx + 1}`} className="flex-1 border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent text-sm" />
+                      <button onClick={() => removeCMSArrayItem('sellSection', 'points', idx)} className="text-red-500 hover:text-red-700 text-xs font-medium shrink-0">Remove</button>
+                    </div>
                   ))}
                 </div>
               </div>
 
               {/* Why Us Section */}
               <div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">"Why Choose Us" Section</h3>
+                <div className="flex justify-between items-center mb-4 border-b pb-2">
+                  <h3 className="text-xl font-bold text-gray-800">"Why Choose Us" Section</h3>
+                  <button onClick={() => addCMSArrayItem('whyUsSection', 'reasons', { title: 'New Reason', desc: '' })} className="text-accent hover:text-accent-hover text-sm font-medium">+ Add Reason</button>
+                </div>
                 <div className="space-y-4 mb-4">
                   <input type="text" placeholder="Section Title" value={globalSettings.whyUsSection?.title || ''} onChange={(e) => handleCMSSectionChange('whyUsSection', 'title', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
                   <input type="text" placeholder="Section Subtitle" value={globalSettings.whyUsSection?.subtitle || ''} onChange={(e) => handleCMSSectionChange('whyUsSection', 'subtitle', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
@@ -359,7 +396,10 @@ const AdminSettings = () => {
                 <div className="space-y-4 border-l-4 border-accent pl-4">
                   {globalSettings.whyUsSection?.reasons?.map((reason, idx) => (
                     <div key={idx} className="space-y-2">
-                      <div className="font-bold text-gray-600 text-sm">Reason {idx + 1}</div>
+                      <div className="flex justify-between items-center">
+                        <div className="font-bold text-gray-600 text-sm">Reason {idx + 1}</div>
+                        <button onClick={() => removeCMSArrayItem('whyUsSection', 'reasons', idx)} className="text-red-500 hover:text-red-700 text-xs font-medium">Remove</button>
+                      </div>
                       <input type="text" value={reason.title} onChange={(e) => handleCMSArrayChange('whyUsSection', 'reasons', idx, 'title', e.target.value)} placeholder="Reason Title" className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
                       <input type="text" value={reason.desc} onChange={(e) => handleCMSArrayChange('whyUsSection', 'reasons', idx, 'desc', e.target.value)} placeholder="Reason Description" className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent text-sm" />
                     </div>
