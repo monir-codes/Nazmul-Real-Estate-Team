@@ -10,7 +10,7 @@ const AdminProperties = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
     title: '', address: '', city: '', state: '', zip: '', price: '', 
-    beds: '', baths: '', sqft: '', propertyType: 'Single Family', status: 'For Sale', description: '', image: ''
+    beds: '', baths: '', sqft: '', propertyType: 'Single Family', status: 'For Sale', description: '', images: []
   });
 
   useEffect(() => {
@@ -39,13 +39,17 @@ const AdminProperties = () => {
   };
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
 
     setUploadingImage(true);
     try {
-      const imageUrl = await uploadToImgBB(file);
-      setFormData({ ...formData, image: imageUrl });
+      const uploadedUrls = [];
+      for (const file of files) {
+        const imageUrl = await uploadToImgBB(file);
+        uploadedUrls.push(imageUrl);
+      }
+      setFormData(prev => ({ ...prev, images: [...prev.images, ...uploadedUrls] }));
     } catch (err) {
       console.error(err);
       alert("Failed to upload image.");
@@ -54,18 +58,22 @@ const AdminProperties = () => {
     }
   };
 
+  const removeImage = (index) => {
+    const newImages = [...formData.images];
+    newImages.splice(index, 1);
+    setFormData({ ...formData, images: newImages });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Backend expects images array for properties
-      const propertyData = { ...formData, images: formData.image ? [formData.image] : [] };
-      const res = await api.post('/properties', propertyData);
+      const res = await api.post('/properties', formData);
       setProperties([res.data, ...properties]);
       setShowModal(false);
       // Reset form
       setFormData({
         title: '', address: '', city: '', state: '', zip: '', price: '', 
-        beds: '', baths: '', sqft: '', propertyType: 'Single Family', status: 'For Sale', description: '', image: ''
+        beds: '', baths: '', sqft: '', propertyType: 'Single Family', status: 'For Sale', description: '', images: []
       });
     } catch (err) {
       console.error("Failed to create property", err);
@@ -190,21 +198,52 @@ const AdminProperties = () => {
                   </select>
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Property Image</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Property Images</label>
+                  
+                  {formData.images.length > 0 && (
+                    <div className="flex flex-wrap gap-4 mb-4">
+                      {formData.images.map((img, idx) => (
+                        <div key={idx} className="relative w-24 h-24 group rounded-md overflow-hidden border border-gray-200">
+                          <img src={img} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+                          <button 
+                            type="button" 
+                            onClick={() => removeImage(idx)}
+                            className="absolute inset-0 bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-6 h-6" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   <div className="flex items-center space-x-4">
                     <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-md font-medium text-sm transition-colors flex items-center border border-gray-300">
                       {uploadingImage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ImageIcon className="w-4 h-4 mr-2" />}
-                      {uploadingImage ? 'Uploading...' : 'Upload Image'}
-                      <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
+                      {uploadingImage ? 'Uploading...' : 'Upload Images'}
+                      <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
                     </label>
-                    <input 
-                      type="text" 
-                      name="image" 
-                      placeholder="Or paste URL here..."
-                      onChange={(e) => setFormData({...formData, image: e.target.value})} 
-                      value={formData.image} 
-                      className="flex-grow border border-gray-300 rounded-md px-3 py-2 outline-none focus:border-accent text-sm" 
-                    />
+                    <div className="flex-grow flex space-x-2">
+                       <input 
+                         type="text" 
+                         placeholder="Or paste URL and press Add" 
+                         id="imageUrlInput"
+                         className="flex-grow border border-gray-300 rounded-md px-3 py-2 outline-none focus:border-accent text-sm" 
+                       />
+                       <button 
+                         type="button"
+                         className="bg-gray-200 px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-300 transition-colors"
+                         onClick={() => {
+                           const input = document.getElementById('imageUrlInput');
+                           if(input.value) {
+                             setFormData(prev => ({...prev, images: [...prev.images, input.value]}));
+                             input.value = '';
+                           }
+                         }}
+                       >
+                         Add
+                       </button>
+                    </div>
                   </div>
                 </div>
                 <div className="col-span-2">

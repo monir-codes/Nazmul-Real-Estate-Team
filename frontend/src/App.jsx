@@ -13,6 +13,7 @@ import Contact from './pages/Contact';
 import About from './pages/About';
 import Team from './pages/Team';
 import AreasWeServe from './pages/AreasWeServe';
+import PropertyDetails from './pages/PropertyDetails';
 
 import AdminLogin from './pages/Admin/Login';
 import AdminProperties from './pages/Admin/Properties';
@@ -34,6 +35,7 @@ function App() {
           <Route path="/buy" element={<PageTransition><Buy /></PageTransition>} />
           <Route path="/sell" element={<PageTransition><Sell /></PageTransition>} />
           <Route path="/listings" element={<PageTransition><Listings /></PageTransition>} />
+          <Route path="/property/:id" element={<PageTransition><PropertyDetails /></PageTransition>} />
           <Route path="/valuation" element={<PageTransition><Valuation /></PageTransition>} />
           <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
           <Route path="/about" element={<PageTransition><About /></PageTransition>} />
