@@ -66,7 +66,7 @@ const WhyUs = ({ content }) => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="flex flex-wrap justify-center gap-8"
         >
           {content?.reasons?.length > 0 ? (
             content.reasons.map((reason, index) => (
@@ -74,7 +74,7 @@ const WhyUs = ({ content }) => {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ y: -10, transition: { duration: 0.2 } }}
-                className="bg-white/5 border border-white/10 p-8 rounded-lg hover:bg-white/10 transition-colors shadow-lg hover:shadow-2xl"
+                className="bg-white/5 border border-white/10 p-8 rounded-lg hover:bg-white/10 transition-colors shadow-lg hover:shadow-2xl w-full sm:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]"
               >
                 <div className="mb-6">
                   {index === 0 ? <Target className="w-8 h-8 text-accent" /> : index === 1 ? <MessageSquare className="w-8 h-8 text-accent" /> : index === 2 ? <Handshake className="w-8 h-8 text-accent" /> : <MonitorSmartphone className="w-8 h-8 text-accent" />}
@@ -89,7 +89,7 @@ const WhyUs = ({ content }) => {
                 key={index}
                 variants={itemVariants}
                 whileHover={{ y: -10, transition: { duration: 0.2 } }}
-                className="bg-white/5 border border-white/10 p-8 rounded-lg hover:bg-white/10 transition-colors shadow-lg hover:shadow-2xl"
+                className="bg-white/5 border border-white/10 p-8 rounded-lg hover:bg-white/10 transition-colors shadow-lg hover:shadow-2xl w-full sm:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]"
               >
                 <div className="mb-6">{reason.icon}</div>
                 <h3 className="text-xl font-bold mb-3 text-white">{reason.title}</h3>
