@@ -5,24 +5,33 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../utils/api';
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [answer, setAnswer] = useState('');
   const [status, setStatus] = useState('idle'); // idle, checking, granted, denied
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!email || !password) return;
+    if (!answer) return;
 
     setStatus('checking');
 
-    try {
-      const res = await api.post('/auth/login', { email, password });
+    if (answer.trim().toLowerCase() === 'nazmul builder') {
+      try {
+        // Under the hood, authenticate with the actual seeded admin credentials
+        const res = await api.post('/auth/login', { 
+          email: 'admin@nazmulrealestate.com', 
+          password: 'password123' 
+        });
       setStatus('granted');
       localStorage.setItem('adminToken', res.data.token);
       setTimeout(() => navigate('/admin/dashboard'), 1500);
     } catch (err) {
-      console.error(err);
+        console.error(err);
+        setStatus('denied');
+        setTimeout(() => setStatus('idle'), 2000);
+      }
+    } else {
+      // Wrong answer
       setStatus('denied');
       setTimeout(() => setStatus('idle'), 2000);
     }
@@ -69,26 +78,20 @@ const AdminLogin = () => {
 
                 <form onSubmit={handleLogin} className="space-y-6">
                   <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest text-left">Email Identity</label>
-                      <input 
-                        required 
-                        type="email" 
-                        className="w-full px-4 py-4 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none text-white text-center tracking-widest transition-all"
-                        placeholder="admin@nazmulrealestate.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
+                    <div className="text-left mb-6 bg-gray-900/50 p-4 border border-cyan-500/30 rounded-lg shadow-inner">
+                      <label className="block text-xs font-bold text-cyan-400 mb-1 uppercase tracking-widest text-left opacity-70">Security Question</label>
+                      <div className="text-white text-xl font-mono tracking-wider">"Who is here?"</div>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest text-left">Passphrase</label>
+                      <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest text-left">Your Answer</label>
                       <input 
                         required 
-                        type="password" 
-                        className="w-full px-4 py-4 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none text-white text-center tracking-widest transition-all"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        type="text" 
+                        className="w-full px-4 py-4 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none text-white text-center tracking-widest transition-all text-lg"
+                        placeholder="Enter identification..."
+                        value={answer}
+                        onChange={(e) => setAnswer(e.target.value)}
+                        autoComplete="off"
                       />
                     </div>
                   </div>
