@@ -6,9 +6,9 @@ const TeamMember = require('../models/TeamMember');
 exports.getTeamMembers = async (req, res) => {
   try {
     const team = await TeamMember.find().sort({ createdAt: -1 });
-    res.json(team);
+    return res.json(team);
   } catch (error) {
-    res.status(500).json({ error: 'Server error fetching team members' });
+    return res.status(500).json({ error: 'Server error fetching team members' });
   }
 };
 
@@ -18,9 +18,9 @@ exports.getTeamMembers = async (req, res) => {
 exports.createTeamMember = async (req, res) => {
   try {
     const newMember = await TeamMember.create(req.body);
-    res.status(201).json(newMember);
+    return res.status(201).json(newMember);
   } catch (error) {
-    res.status(500).json({ error: 'Server error creating team member' });
+    return res.status(500).json({ error: 'Server error creating team member' });
   }
 };
 
@@ -33,8 +33,8 @@ exports.deleteTeamMember = async (req, res) => {
     if (!member) return res.status(404).json({ error: 'Not found' });
     
     await member.deleteOne();
-    res.json({ message: 'Team member removed' });
+    return res.json({ message: 'Team member removed' });
   } catch (error) {
-    res.status(500).json({ error: 'Server error deleting team member' });
+    return res.status(500).json({ error: 'Server error deleting team member' });
   }
 };

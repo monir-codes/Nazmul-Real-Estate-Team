@@ -48,9 +48,9 @@ exports.getSettings = async (req, res) => {
     });
 
     // Merge with defaults in case some pages are missing from DB
-    res.json({ ...defaultSettings, ...formattedSettings });
+    return res.json({ ...defaultSettings, ...formattedSettings });
   } catch (error) {
-    res.status(500).json({ error: 'Server error fetching settings' });
+    return res.status(500).json({ error: 'Server error fetching settings' });
   }
 };
 
@@ -78,9 +78,9 @@ exports.updateSettings = async (req, res) => {
       });
     }
 
-    res.json(setting);
+    return res.json(setting);
   } catch (error) {
-    res.status(500).json({ error: 'Server error updating settings' });
+    return res.status(500).json({ error: 'Server error updating settings' });
   }
 };
 
@@ -159,9 +159,9 @@ exports.getGlobalSettings = async (req, res) => {
     if (!settings) {
       settings = await GlobalSettings.create(defaultGlobalSettings);
     }
-    res.json(settings);
+    return res.json(settings);
   } catch (error) {
-    res.status(500).json({ error: 'Server error fetching global settings' });
+    return res.status(500).json({ error: 'Server error fetching global settings' });
   }
 };
 
@@ -189,8 +189,8 @@ exports.updateGlobalSettings = async (req, res) => {
     } else {
       settings = await GlobalSettings.create(req.body);
     }
-    res.json(settings);
+    return res.json(settings);
   } catch (error) {
-    res.status(500).json({ error: 'Server error updating global settings' });
+    return res.status(500).json({ error: 'Server error updating global settings' });
   }
 };

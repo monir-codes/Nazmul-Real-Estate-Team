@@ -18,7 +18,7 @@ const loginUser = async (req, res) => {
         return res.status(403).json({ message: 'Your account has been banned by the administrator.' });
       }
 
-      res.json({
+      return res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
@@ -26,10 +26,10 @@ const loginUser = async (req, res) => {
         token: generateToken(user._id),
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -46,9 +46,9 @@ const seedAdmin = async (req, res) => {
       password: 'password123',
       role: 'admin'
     });
-    res.status(201).json({ message: 'Admin seeded', email: admin.email });
+    return res.status(201).json({ message: 'Admin seeded', email: admin.email });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -59,7 +59,7 @@ const registerUser = async (req, res) => {
     if (userExists) return res.status(400).json({ message: 'User already exists' });
 
     const user = await User.create({ name, email, password, role: 'client' });
-    res.status(201).json({
+    return res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -67,7 +67,7 @@ const registerUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -75,7 +75,7 @@ const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate('savedProperties');
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json({
+    return res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -83,7 +83,7 @@ const getProfile = async (req, res) => {
       savedProperties: user.savedProperties
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -100,7 +100,7 @@ const updateProfile = async (req, res) => {
 
     const updatedUser = await user.save();
     
-    res.json({
+    return res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
@@ -108,7 +108,7 @@ const updateProfile = async (req, res) => {
       token: generateToken(updatedUser._id), // Optionally regenerate token
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -126,9 +126,9 @@ const toggleFavorite = async (req, res) => {
     }
     
     await user.save();
-    res.json(user.savedProperties);
+    return res.json(user.savedProperties);
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
@@ -147,7 +147,7 @@ const googleAuth = async (req, res) => {
       return res.status(403).json({ message: 'Your account has been banned by the administrator.' });
     }
 
-    res.json({
+    return res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
@@ -155,7 +155,7 @@ const googleAuth = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error: error.message });
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 

@@ -3,9 +3,9 @@ const Lead = require('../models/Lead');
 const getLeads = async (req, res) => {
   try {
     const leads = await Lead.find({}).sort({ createdAt: -1 });
-    res.json(leads);
+    return res.json(leads);
   } catch (error) {
-    res.status(500).json({ message: 'Server Error' });
+    return res.status(500).json({ message: 'Server Error' });
   }
 };
 
@@ -52,9 +52,9 @@ const createLead = async (req, res) => {
       console.error("Nodemailer setup failed:", mailError);
     }
 
-    res.status(201).json(createdLead);
+    return res.status(201).json(createdLead);
   } catch (error) {
-    res.status(400).json({ message: 'Invalid lead data', error: error.message });
+    return res.status(400).json({ message: 'Invalid lead data', error: error.message });
   }
 };
 
@@ -64,12 +64,12 @@ const updateLeadStatus = async (req, res) => {
     if (lead) {
       lead.status = req.body.status || lead.status;
       const updatedLead = await lead.save();
-      res.json(updatedLead);
+      return res.json(updatedLead);
     } else {
-      res.status(404).json({ message: 'Lead not found' });
+      return res.status(404).json({ message: 'Lead not found' });
     }
   } catch (error) {
-    res.status(400).json({ message: 'Invalid data', error: error.message });
+    return res.status(400).json({ message: 'Invalid data', error: error.message });
   }
 };
 
