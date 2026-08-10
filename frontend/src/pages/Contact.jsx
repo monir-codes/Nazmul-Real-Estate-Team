@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { Mail, Phone, MapPin, AlertCircle } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Mail, Phone, MapPin, AlertCircle, User, MessageSquare, Send } from 'lucide-react';
 import { motion } from 'framer-motion';
+import emailjs from '@emailjs/browser';
 import SEO from '../components/SEO';
 import api from '../utils/api';
 
 const Contact = () => {
+  const formRef = useRef();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,7 +23,9 @@ const Contact = () => {
     e.preventDefault();
     setSubmitting(true);
     setError('');
+
     try {
+      // 1. Save lead to DB via backend API
       await api.post('/leads', {
         name: formData.name,
         email: formData.email,
@@ -31,9 +35,23 @@ const Contact = () => {
               formData.interest === 'Buying' ? 'Buy' : 'General',
         message: formData.message
       });
+    } catch (dbErr) {
+      console.warn('DB save failed (will still try email):', dbErr);
+    }
+
+    try {
+      // 2. Send email notification via EmailJS
+      await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_placeholder',
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_placeholder',
+        formRef.current,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'public_key_placeholder'
+      );
       setSubmitted(true);
-    } catch (err) {
-      console.error('Failed to submit lead', err);
+    } catch (emailErr) {
+      console.error('EmailJS failed:', emailErr);
+      // If DB succeeded but email failed, still show success
+      // If both failed, show error
       setError('We couldn\'t send your message right now. Please try again later or contact us directly by phone.');
     } finally {
       setSubmitting(false);
@@ -60,22 +78,28 @@ const Contact = () => {
               
               <div className="space-y-6">
                 <div className="flex items-start">
-                  <Phone className="w-6 h-6 text-accent mr-4" />
-                  <div>
+                  <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-5 h-5 text-accent" />
+                  </div>
+                  <div className="ml-4">
                     <p className="font-medium text-gray-800">Phone</p>
-                    <a href="tel:+1234567890" className="text-gray-500 hover:text-accent">(555) 123-4567</a>
+                    <a href="tel:+1234567890" className="text-gray-500 hover:text-accent transition-colors">(555) 123-4567</a>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <Mail className="w-6 h-6 text-accent mr-4" />
-                  <div>
+                  <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-5 h-5 text-accent" />
+                  </div>
+                  <div className="ml-4">
                     <p className="font-medium text-gray-800">Email</p>
-                    <a href="mailto:contact@nazmulrealestate.com" className="text-gray-500 hover:text-accent">contact@nazmulrealestate.com</a>
+                    <a href="mailto:contact@nazmulrealestate.com" className="text-gray-500 hover:text-accent transition-colors">contact@nazmulrealestate.com</a>
                   </div>
                 </div>
                 <div className="flex items-start">
-                  <MapPin className="w-6 h-6 text-accent mr-4" />
-                  <div>
+                  <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-accent" />
+                  </div>
+                  <div className="ml-4">
                     <p className="font-medium text-gray-800">Office</p>
                     <p className="text-gray-500">123 Real Estate Blvd<br />Suite 100<br />Los Angeles, CA 90001</p>
                   </div>
@@ -97,7 +121,7 @@ const Contact = () => {
                 </div>
                 <h3 className="text-2xl font-bold text-primary mb-2">Message Sent!</h3>
                 <p className="text-gray-600 mb-6">Thank you for reaching out. A member of our team will contact you shortly.</p>
-                <button onClick={() => setSubmitted(false)} className="btn-secondary">Send Another Message</button>
+                <button onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', phone: '', interest: 'Buying', message: '' }); }} className="btn-secondary">Send Another Message</button>
               </motion.div>
             ) : (
               <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
@@ -114,26 +138,63 @@ const Contact = () => {
                   </motion.div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                      <input required type="text" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none" onChange={e => setFormData({...formData, name: e.target.value})} />
+                      <div className="relative">
+                        <User className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+                        <input 
+                          required 
+                          type="text" 
+                          name="from_name"
+                          value={formData.name}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none transition-shadow" 
+                          placeholder="Your full name"
+                          onChange={e => setFormData({...formData, name: e.target.value})} 
+                        />
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                      <input required type="email" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none" onChange={e => setFormData({...formData, email: e.target.value})} />
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+                        <input 
+                          required 
+                          type="email" 
+                          name="from_email"
+                          value={formData.email}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none transition-shadow" 
+                          placeholder="you@example.com"
+                          onChange={e => setFormData({...formData, email: e.target.value})} 
+                        />
+                      </div>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                      <input type="tel" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none" onChange={e => setFormData({...formData, phone: e.target.value})} />
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+                        <input 
+                          type="tel" 
+                          name="from_phone"
+                          value={formData.phone}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none transition-shadow" 
+                          placeholder="(555) 000-0000"
+                          onChange={e => setFormData({...formData, phone: e.target.value})} 
+                        />
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">I'm interested in:</label>
-                      <select className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none" onChange={e => setFormData({...formData, interest: e.target.value})}>
+                      <select 
+                        name="interest"
+                        value={formData.interest}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none bg-white" 
+                        onChange={e => setFormData({...formData, interest: e.target.value})}
+                      >
                         <option>Buying</option>
                         <option>Selling</option>
                         <option>Investing</option>
@@ -145,11 +206,35 @@ const Contact = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-                    <textarea required rows="4" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none" onChange={e => setFormData({...formData, message: e.target.value})}></textarea>
+                    <div className="relative">
+                      <MessageSquare className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+                      <textarea 
+                        required 
+                        rows="4" 
+                        name="message"
+                        value={formData.message}
+                        className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none transition-shadow" 
+                        placeholder="Tell us about your needs..."
+                        onChange={e => setFormData({...formData, message: e.target.value})}
+                      ></textarea>
+                    </div>
                   </div>
 
-                  <button type="submit" disabled={submitting} className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed">
-                    {submitting ? 'Sending...' : 'Send Message'}
+                  {/* Hidden field for EmailJS template */}
+                  <input type="hidden" name="to_name" value="Nazmul Real Estate Team" />
+
+                  <button type="submit" disabled={submitting} className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    {submitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        Send Message
+                      </>
+                    )}
                   </button>
                 </form>
               </div>

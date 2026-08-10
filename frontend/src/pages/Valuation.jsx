@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Home, DollarSign, Calculator, MapPin, AlertCircle } from 'lucide-react';
+import { Home, DollarSign, Calculator, MapPin, AlertCircle, User, Mail, Phone } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import SEO from '../components/SEO';
 import api from '../utils/api';
 
 const Valuation = () => {
+  const formRef = useRef();
   const [formData, setFormData] = useState({
     address: '',
     city: '',
@@ -23,18 +25,32 @@ const Valuation = () => {
     e.preventDefault();
     setSubmitting(true);
     setError('');
+
     try {
+      // 1. Save lead to DB via backend API
       await api.post('/leads', {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         type: 'Valuation',
         propertyAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zip}`,
-        message: 'Requested a Home Valuation'
+        message: `Requested a Home Valuation for: ${formData.address}, ${formData.city}, ${formData.state} ${formData.zip}`
       });
+    } catch (dbErr) {
+      console.warn('DB save failed (will still try email):', dbErr);
+    }
+
+    try {
+      // 2. Send email notification via EmailJS
+      await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_placeholder',
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_placeholder',
+        formRef.current,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'public_key_placeholder'
+      );
       setSubmitted(true);
-    } catch (err) {
-      console.error('Failed to submit valuation lead', err);
+    } catch (emailErr) {
+      console.error('EmailJS failed:', emailErr);
       setError('We couldn\'t process your request right now. Please try again later or contact us directly.');
     } finally {
       setSubmitting(false);
@@ -95,7 +111,7 @@ const Valuation = () => {
               </motion.div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Property Address</label>
                 <div className="relative">
@@ -103,6 +119,7 @@ const Valuation = () => {
                   <input 
                     required
                     type="text" 
+                    name="property_address"
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none transition-shadow"
                     placeholder="123 Main St"
                     onChange={e => setFormData({...formData, address: e.target.value})}
@@ -114,21 +131,21 @@ const Valuation = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
                   <input 
-                    required type="text" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                    required type="text" name="city" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
                     onChange={e => setFormData({...formData, city: e.target.value})}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
                   <input 
-                    required type="text" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                    required type="text" name="state" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
                     onChange={e => setFormData({...formData, state: e.target.value})}
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
                   <input 
-                    required type="text" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                    required type="text" name="zip" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
                     onChange={e => setFormData({...formData, zip: e.target.value})}
                   />
                 </div>
@@ -138,31 +155,54 @@ const Valuation = () => {
               
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input 
-                  required type="text" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
-                  onChange={e => setFormData({...formData, name: e.target.value})}
-                />
+                <div className="relative">
+                  <User className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                  <input 
+                    required type="text" name="from_name" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                    placeholder="Your full name"
+                    onChange={e => setFormData({...formData, name: e.target.value})}
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input 
-                    required type="email" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
-                    onChange={e => setFormData({...formData, email: e.target.value})}
-                  />
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                    <input 
+                      required type="email" name="from_email" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                      placeholder="you@example.com"
+                      onChange={e => setFormData({...formData, email: e.target.value})}
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input 
-                    required type="tel" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
-                    onChange={e => setFormData({...formData, phone: e.target.value})}
-                  />
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
+                    <input 
+                      required type="tel" name="from_phone" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                      placeholder="(555) 000-0000"
+                      onChange={e => setFormData({...formData, phone: e.target.value})}
+                    />
+                  </div>
                 </div>
               </div>
 
-              <button type="submit" disabled={submitting} className="btn-accent w-full text-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed">
-                {submitting ? 'Submitting...' : 'Get My Home Value'}
+              {/* Hidden fields for EmailJS template */}
+              <input type="hidden" name="to_name" value="Nazmul Real Estate Team" />
+              <input type="hidden" name="message" value={`Home Valuation Request for: ${formData.address}, ${formData.city}, ${formData.state} ${formData.zip}`} />
+
+              <button type="submit" disabled={submitting} className="btn-accent w-full text-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                {submitting ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  'Get My Home Value'
+                )}
               </button>
             </form>
           </div>
