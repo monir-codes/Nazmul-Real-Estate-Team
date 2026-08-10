@@ -226,9 +226,7 @@ const Contact = () => {
                         placeholder="Tell us about your needs..."
                         onChange={e => setFormData({...formData, message: e.target.value})}
                       ></textarea>
-                    </div>
                   </div>
-
                   </div>
 
                   <button type="submit" disabled={submitting} className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
