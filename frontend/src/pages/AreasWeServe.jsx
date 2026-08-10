@@ -1,22 +1,36 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Building, GraduationCap, Coffee, ArrowRight } from 'lucide-react';
+import { MapPin, ArrowRight, Building, Trees, GraduationCap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import Loader from '../components/Loader';
+import PageError from '../components/PageError';
 import api from '../utils/api';
+
+const defaultData = {
+  title: 'Areas We Serve',
+  subtitle: 'Deep local expertise across the most sought-after neighborhoods. We know the streets, the schools, and the hidden opportunities.',
+  backgroundImage: 'https://images.unsplash.com/photo-1580659328221-a53ec8651817?w=1600&q=80'
+};
 
 const AreasWeServe = () => {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await api.get('/settings');
-        setPageData(res.data.areas);
+        if (res.data && res.data.areas) {
+          setPageData(res.data.areas);
+        } else {
+          setPageData(defaultData);
+        }
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("API failed, using local fallback", err);
+        setPageData(defaultData);
         setLoading(false);
       }
     };
@@ -24,7 +38,7 @@ const AreasWeServe = () => {
   }, []);
 
   if (loading) return <Loader />;
-  if (!pageData) return <div className="pt-32 text-center text-red-500">Error loading page content.</div>;
+  if (!pageData || hasError) return <PageError message="Unable to load the Areas page." />;
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">

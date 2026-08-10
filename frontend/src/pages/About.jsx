@@ -1,23 +1,36 @@
 import { useState, useEffect } from 'react';
-import { Award, Target, Users, BookOpen } from 'lucide-react';
+import { Award, Users, Target, Shield, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import Loader from '../components/Loader';
+import PageError from '../components/PageError';
 import api from '../utils/api';
+
+const defaultData = {
+  title: 'Our Story',
+  subtitle: 'Dedicated to excellence, integrity, and achieving exceptional results for our clients.',
+  backgroundImage: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1600&q=80'
+};
 
 const About = () => {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await api.get('/settings');
-        setPageData(res.data.about);
+        if (res.data && res.data.about) {
+          setPageData(res.data.about);
+        } else {
+          setPageData(defaultData);
+        }
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("API failed, using local fallback", err);
+        setPageData(defaultData);
         setLoading(false);
       }
     };
@@ -25,7 +38,7 @@ const About = () => {
   }, []);
 
   if (loading) return <Loader />;
-  if (!pageData) return <div className="pt-32 text-center text-red-500">Error loading page content.</div>;
+  if (!pageData || hasError) return <PageError message="Unable to load the About page." />;
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">

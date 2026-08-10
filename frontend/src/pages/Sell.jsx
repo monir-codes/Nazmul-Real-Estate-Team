@@ -1,23 +1,36 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, DollarSign, Camera, Users, Target } from 'lucide-react';
+import { Camera, TrendingUp, Shield, Users, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import Loader from '../components/Loader';
+import PageError from '../components/PageError';
 import api from '../utils/api';
+
+const defaultData = {
+  title: "Maximize Your Home's Value",
+  subtitle: 'We use data-driven pricing, premium presentation, and aggressive marketing to sell your home for top dollar.',
+  backgroundImage: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1600&q=80'
+};
 
 const Sell = () => {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await api.get('/settings');
-        setPageData(res.data.sell);
+        if (res.data && res.data.sell) {
+          setPageData(res.data.sell);
+        } else {
+          setPageData(defaultData);
+        }
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("API failed, using local fallback", err);
+        setPageData(defaultData);
         setLoading(false);
       }
     };
@@ -25,7 +38,7 @@ const Sell = () => {
   }, []);
 
   if (loading) return <Loader />;
-  if (!pageData) return <div className="pt-32 text-center text-red-500">Error loading page content.</div>;
+  if (!pageData || hasError) return <PageError message="Unable to load the Seller's Guide." />;
 
   return (
     <div className="pt-24 min-h-screen bg-gray-50">

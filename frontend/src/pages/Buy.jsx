@@ -4,20 +4,33 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import Loader from '../components/Loader';
+import PageError from '../components/PageError';
 import api from '../utils/api';
+
+const defaultData = {
+  title: 'Expert Guidance For Buyers',
+  subtitle: 'From finding the perfect neighborhood to negotiating the best terms, we are with you every step of the way.',
+  backgroundImage: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1600&q=80'
+};
 
 const Buy = () => {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const res = await api.get('/settings');
-        setPageData(res.data.buy);
+        if (res.data && res.data.buy) {
+          setPageData(res.data.buy);
+        } else {
+          setPageData(defaultData);
+        }
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("API failed, using local fallback", err);
+        setPageData(defaultData); // FIX: Use fallback data instead of breaking
         setLoading(false);
       }
     };
@@ -25,7 +38,7 @@ const Buy = () => {
   }, []);
 
   if (loading) return <Loader />;
-  if (!pageData) return <div className="pt-32 text-center text-red-500">Error loading page content.</div>;
+  if (!pageData || hasError) return <PageError message="Unable to load the Buyer's Guide." />;
 
   return (
     <div className="pt-24 min-h-screen">
