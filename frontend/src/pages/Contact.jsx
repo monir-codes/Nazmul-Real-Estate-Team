@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
 import api from '../utils/api';
@@ -14,9 +14,13 @@ const Contact = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError('');
     try {
       await api.post('/leads', {
         name: formData.name,
@@ -28,9 +32,11 @@ const Contact = () => {
         message: formData.message
       });
       setSubmitted(true);
-    } catch (error) {
-      console.error('Failed to submit lead', error);
-      alert('There was an error sending your message. Please try again.');
+    } catch (err) {
+      console.error('Failed to submit lead', err);
+      setError('We couldn\'t send your message right now. Please try again later or contact us directly by phone.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -96,6 +102,18 @@ const Contact = () => {
             ) : (
               <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                 <h3 className="text-2xl font-bold text-primary mb-6">Send us a message</h3>
+
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3"
+                  >
+                    <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-red-700 text-sm">{error}</p>
+                  </motion.div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -130,7 +148,9 @@ const Contact = () => {
                     <textarea required rows="4" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none" onChange={e => setFormData({...formData, message: e.target.value})}></textarea>
                   </div>
 
-                  <button type="submit" className="btn-primary w-full">Send Message</button>
+                  <button type="submit" disabled={submitting} className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed">
+                    {submitting ? 'Sending...' : 'Send Message'}
+                  </button>
                 </form>
               </div>
             )}

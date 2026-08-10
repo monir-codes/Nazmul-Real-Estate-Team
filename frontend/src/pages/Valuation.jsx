@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Home, DollarSign, Calculator, MapPin } from 'lucide-react';
+import { Home, DollarSign, Calculator, MapPin, AlertCircle } from 'lucide-react';
 import SEO from '../components/SEO';
 import api from '../utils/api';
 
@@ -16,9 +16,13 @@ const Valuation = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
+    setError('');
     try {
       await api.post('/leads', {
         name: formData.name,
@@ -29,9 +33,11 @@ const Valuation = () => {
         message: 'Requested a Home Valuation'
       });
       setSubmitted(true);
-    } catch (error) {
-      console.error('Failed to submit valuation lead', error);
-      alert('There was an error submitting your request. Please try again.');
+    } catch (err) {
+      console.error('Failed to submit valuation lead', err);
+      setError('We couldn\'t process your request right now. Please try again later or contact us directly.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -77,6 +83,18 @@ const Valuation = () => {
           {/* Form */}
           <div className="md:w-2/3 bg-white p-8 rounded-xl shadow-premium">
             <h3 className="text-2xl font-bold text-primary mb-6">Property Details</h3>
+
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3"
+              >
+                <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                <p className="text-red-700 text-sm">{error}</p>
+              </motion.div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Property Address</label>
@@ -143,8 +161,8 @@ const Valuation = () => {
                 </div>
               </div>
 
-              <button type="submit" className="btn-accent w-full text-lg mt-4">
-                Get My Home Value
+              <button type="submit" disabled={submitting} className="btn-accent w-full text-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed">
+                {submitting ? 'Submitting...' : 'Get My Home Value'}
               </button>
             </form>
           </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, Key, Shield, ArrowRight } from 'lucide-react';
+import { Search, MapPin, Key, Shield, ArrowRight, DollarSign } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';

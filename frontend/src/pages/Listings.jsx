@@ -6,6 +6,87 @@ import SEO from '../components/SEO';
 import api from '../utils/api';
 import { useWishlist } from '../context/WishlistContext';
 
+const defaultProperties = [
+  {
+    _id: 'fallback-1',
+    address: '2847 Sunset Boulevard',
+    city: 'Beverly Hills',
+    state: 'CA',
+    price: 2450000,
+    beds: 5,
+    baths: 4,
+    sqft: 4200,
+    status: 'For Sale',
+    propertyType: 'Single Family',
+    images: ['https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80']
+  },
+  {
+    _id: 'fallback-2',
+    address: '1523 Ocean Drive',
+    city: 'Malibu',
+    state: 'CA',
+    price: 3750000,
+    beds: 4,
+    baths: 3,
+    sqft: 3800,
+    status: 'For Sale',
+    propertyType: 'Waterfront',
+    images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80']
+  },
+  {
+    _id: 'fallback-3',
+    address: '890 Mulholland Drive',
+    city: 'Los Angeles',
+    state: 'CA',
+    price: 1950000,
+    beds: 3,
+    baths: 2,
+    sqft: 2800,
+    status: 'Pending',
+    propertyType: 'Modern Villa',
+    images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80']
+  },
+  {
+    _id: 'fallback-4',
+    address: '456 Wilshire Blvd',
+    city: 'Santa Monica',
+    state: 'CA',
+    price: 4200000,
+    beds: 6,
+    baths: 5,
+    sqft: 5500,
+    status: 'For Sale',
+    propertyType: 'Luxury Estate',
+    images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80']
+  },
+  {
+    _id: 'fallback-5',
+    address: '312 Pacific Coast Hwy',
+    city: 'Laguna Beach',
+    state: 'CA',
+    price: 2850000,
+    beds: 4,
+    baths: 4,
+    sqft: 3600,
+    status: 'For Sale',
+    propertyType: 'Contemporary',
+    images: ['https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80']
+  },
+  {
+    _id: 'fallback-6',
+    address: '1100 Bel Air Road',
+    city: 'Bel Air',
+    state: 'CA',
+    price: 5600000,
+    beds: 7,
+    baths: 6,
+    sqft: 7200,
+    status: 'For Sale',
+    propertyType: 'Mansion',
+    images: ['https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80']
+  }
+];
+
 const Listings = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,10 +99,15 @@ const Listings = () => {
     const fetchProperties = async () => {
       try {
         const res = await api.get('/properties');
-        setProperties(res.data);
+        if (res.data && res.data.length > 0) {
+          setProperties(res.data);
+        } else {
+          setProperties(defaultProperties);
+        }
         setLoading(false);
       } catch (err) {
-        console.error("Failed to fetch properties", err);
+        console.error("Failed to fetch properties, using fallback data", err);
+        setProperties(defaultProperties);
         setLoading(false);
       }
     };
@@ -45,7 +131,7 @@ const Listings = () => {
       {/* Search Header */}
       <div className="bg-white border-b border-gray-200 py-8">
         <div className="container-custom">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <h1 className="text-3xl font-serif font-bold text-primary">Explore Properties</h1>
             
             {/* View Mode Toggle */}

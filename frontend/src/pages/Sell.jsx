@@ -50,7 +50,7 @@ const Sell = () => {
       />
       
       {/* Cinematic Hero */}
-      <div className="bg-primary text-white h-[60vh] relative overflow-hidden flex flex-col justify-center">
+      <div className="bg-primary text-white h-[50vh] relative overflow-hidden flex flex-col justify-center">
         <motion.div 
           className="absolute inset-0 bg-cover bg-center opacity-70"
           style={{ backgroundImage: `url(${pageData.backgroundImage})`, y, scale: 1.15 }}

@@ -5,6 +5,36 @@ import SEO from '../components/SEO';
 import Loader from '../components/Loader';
 import api from '../utils/api';
 
+const defaultTeamMembers = [
+  {
+    _id: 'fallback-t1',
+    name: 'Nazmul Hasan',
+    role: 'Team Lead & Broker',
+    bio: 'With over 15 years of experience in luxury real estate, Nazmul leads the team with a passion for delivering exceptional results and building lasting client relationships.',
+    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80',
+    email: 'nazmul@nazmulrealestate.com',
+    phone: '(555) 123-4567'
+  },
+  {
+    _id: 'fallback-t2',
+    name: 'Sarah Mitchell',
+    role: 'Senior Agent',
+    bio: 'Sarah specializes in waterfront properties and has closed over $50M in transactions. Her attention to detail and market knowledge are unmatched.',
+    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80',
+    email: 'sarah@nazmulrealestate.com',
+    phone: '(555) 234-5678'
+  },
+  {
+    _id: 'fallback-t3',
+    name: 'David Chen',
+    role: 'Buyer Specialist',
+    bio: 'David is dedicated to helping first-time and seasoned buyers find their dream homes. His negotiation skills consistently save clients thousands.',
+    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=600&q=80',
+    email: 'david@nazmulrealestate.com',
+    phone: '(555) 345-6789'
+  }
+];
+
 const Team = () => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,9 +43,14 @@ const Team = () => {
     const fetchTeam = async () => {
       try {
         const res = await api.get('/team');
-        setTeamMembers(res.data);
+        if (res.data && res.data.length > 0) {
+          setTeamMembers(res.data);
+        } else {
+          setTeamMembers(defaultTeamMembers);
+        }
       } catch (error) {
-        console.error("Failed to load team data", error);
+        console.error("Failed to load team data, using fallback", error);
+        setTeamMembers(defaultTeamMembers);
       } finally {
         setLoading(false);
       }
@@ -47,8 +82,9 @@ const Team = () => {
               <div key={member._id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden group flex flex-col">
                 <div className="h-80 overflow-hidden relative">
                   <img 
-                    src={member.image || 'https://via.placeholder.com/400'} 
+                    src={member.image || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80'} 
                     alt={member.name} 
+                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=600&q=80'; }}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
