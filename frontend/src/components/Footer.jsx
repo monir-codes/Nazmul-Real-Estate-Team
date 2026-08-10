@@ -4,20 +4,39 @@ import { useState, useEffect } from 'react';
 import api from '../utils/api';
 
 const Footer = () => {
-  const [globalSettings, setGlobalSettings] = useState({
-    headerLinks: [],
-    footerLinks: [],
+const defaultSettings = {
+    headerLinks: [
+      { label: 'Home', url: '/' },
+      { label: 'Buy', url: '/buy' },
+      { label: 'Sell', url: '/sell' },
+      { label: 'Listings', url: '/listings' },
+      { label: 'Our Team', url: '/team' },
+      { label: 'Areas We Serve', url: '/areas' }
+    ],
+    footerLinks: [
+      { label: 'Privacy Policy', url: '/privacy' },
+      { label: 'Terms of Service', url: '/terms' },
+      { label: 'Contact', url: '/contact' }
+    ],
     socialLinks: [],
-    contactInfo: { phone: '', email: '', address: '' }
-  });
+    contactInfo: { phone: '(555) 123-4567', email: 'contact@nazmulrealestate.com', address: '123 Real Estate Blvd, Suite 100' }
+  };
+
+  const [globalSettings, setGlobalSettings] = useState(defaultSettings);
 
   useEffect(() => {
     const fetchGlobalSettings = async () => {
       try {
         const res = await api.get('/settings/global');
-        if (res.data) setGlobalSettings(res.data);
+        if (res.data) {
+          setGlobalSettings({
+            ...defaultSettings,
+            ...res.data,
+            contactInfo: { ...defaultSettings.contactInfo, ...(res.data.contactInfo || {}) }
+          });
+        }
       } catch (err) {
-        console.error("Failed to fetch global settings for footer", err);
+        console.error("Failed to fetch global settings for footer, using fallback", err);
       }
     };
     fetchGlobalSettings();

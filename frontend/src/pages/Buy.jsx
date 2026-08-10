@@ -50,14 +50,14 @@ const Buy = () => {
       />
       
       {/* Cinematic Hero */}
-      <div className="bg-primary text-white min-h-[65vh] relative overflow-hidden flex flex-col justify-center">
+      <div className="bg-primary text-white min-h-[75vh] lg:min-h-[85vh] relative overflow-hidden flex flex-col justify-center">
         <motion.div 
           className="absolute inset-0 bg-cover bg-center opacity-70"
           style={{ backgroundImage: `url(${pageData.backgroundImage})`, y, scale: 1.15 }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
         
-        <div className="container-custom relative z-20 pt-10">
+        <div className="container-custom relative z-20 py-10">
           <div className="max-w-3xl">
             <motion.div
               initial={{ width: 0 }}
@@ -69,7 +69,7 @@ const Buy = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-              className="text-4xl md:text-5xl lg:text-7xl font-serif font-bold mb-6 text-white drop-shadow-2xl leading-tight"
+              className="text-3xl md:text-5xl lg:text-6xl font-serif font-bold mb-4 md:mb-6 text-white drop-shadow-2xl leading-tight"
             >
               {pageData.title}
             </motion.h1>
@@ -77,7 +77,7 @@ const Buy = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-              className="text-xl md:text-2xl text-gray-200 mb-10 drop-shadow-md font-light leading-relaxed max-w-2xl"
+              className="text-lg md:text-xl lg:text-2xl text-gray-200 mb-8 drop-shadow-md font-light leading-relaxed max-w-2xl"
             >
               {pageData.subtitle}
             </motion.p>
