@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Mail, Trash2 } from 'lucide-react';
 import api from '../../utils/api';
+import AdminLoader from '../../components/AdminLoader';
 
 const AdminLeads = () => {
   const [leads, setLeads] = useState([]);
@@ -46,7 +47,7 @@ const AdminLeads = () => {
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         {loading ? (
-           <div className="p-8 text-center text-gray-500">Loading leads...</div>
+          <AdminLoader message="Loading leads..." />
         ) : leads.length === 0 ? (
            <div className="p-8 text-center text-gray-500">No leads found yet.</div>
         ) : (

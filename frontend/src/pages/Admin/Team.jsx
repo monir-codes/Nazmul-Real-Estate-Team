@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Edit, Trash2, Plus, Image as ImageIcon, Loader2, X, Search } from 'lucide-react';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
+import AdminLoader from '../../components/AdminLoader';
 
 const AdminTeam = () => {
   const [team, setTeam] = useState([]);
@@ -66,7 +67,7 @@ const AdminTeam = () => {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Loading team...</div>;
+  if (loading) return <AdminLoader message="Loading team..." />;
 
   return (
     <div>

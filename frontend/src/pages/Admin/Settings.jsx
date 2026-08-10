@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Save, Image as ImageIcon, Loader2 } from 'lucide-react';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
+import AdminLoader from '../../components/AdminLoader';
 
 const AdminSettings = () => {
   const [settings, setSettings] = useState({
@@ -21,7 +22,8 @@ const AdminSettings = () => {
     headerLinks: [],
     footerLinks: [],
     socialLinks: [],
-    contactInfo: { phone: '', email: '', address: '' }
+    contactInfo: { phone: '', email: '', address: '' },
+    stats: []
   });
 
   const fetchSettings = async () => {
@@ -37,6 +39,16 @@ const AdminSettings = () => {
       console.error("Failed to fetch settings", err);
       setLoading(false);
     }
+  };
+
+  const handleTextChange = (e) => {
+    setSettings({
+      ...settings,
+      [activeTab]: {
+        ...settings[activeTab],
+        [e.target.name]: e.target.value
+      }
+    });
   };
 
   const handleGlobalTextChange = (e) => {
@@ -56,12 +68,14 @@ const AdminSettings = () => {
   };
 
   const addLink = (type) => {
-    const newLink = type === 'socialLinks' 
-      ? { platform: 'New Platform', url: '#' }
-      : { label: 'New Link', url: '#' };
+    let newLink;
+    if (type === 'socialLinks') newLink = { platform: 'New Platform', url: '#' };
+    else if (type === 'stats') newLink = { value: '0', label: 'New Stat' };
+    else newLink = { label: 'New Link', url: '#' };
+    
     setGlobalSettings({
       ...globalSettings,
-      [type]: [...globalSettings[type], newLink]
+      [type]: [...(globalSettings[type] || []), newLink]
     });
   };
 
@@ -69,6 +83,27 @@ const AdminSettings = () => {
     const updatedLinks = [...globalSettings[type]];
     updatedLinks.splice(index, 1);
     setGlobalSettings({ ...globalSettings, [type]: updatedLinks });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const imageUrl = await uploadToImgBB(file);
+      setSettings({
+        ...settings,
+        [activeTab]: {
+          ...settings[activeTab],
+          backgroundImage: imageUrl
+        }
+      });
+    } catch (err) {
+      alert('Failed to upload image');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleGlobalSave = async () => {
@@ -103,7 +138,11 @@ const AdminSettings = () => {
     }
   };
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Loading page settings...</div>;
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  if (loading) return <AdminLoader message="Loading settings..." />;
 
   return (
     <div>
@@ -142,6 +181,23 @@ const AdminSettings = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                     <input type="text" name="address" value={globalSettings.contactInfo?.address || ''} onChange={handleGlobalTextChange} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
                   </div>
+                </div>
+              </div>
+
+              {/* Homepage Statistics */}
+              <div>
+                <div className="flex justify-between items-center mb-4 border-b pb-2">
+                  <h3 className="text-xl font-bold text-gray-800">Homepage Statistics</h3>
+                  <button onClick={() => addLink('stats')} className="text-accent hover:text-accent-hover text-sm font-medium">+ Add Stat</button>
+                </div>
+                <div className="space-y-3">
+                  {globalSettings.stats && globalSettings.stats.map((stat, idx) => (
+                    <div key={idx} className="flex space-x-4 items-center">
+                      <input type="text" value={stat.value} onChange={(e) => handleLinkChange('stats', idx, 'value', e.target.value)} placeholder="Value (e.g., 500+)" className="w-1/3 border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                      <input type="text" value={stat.label} onChange={(e) => handleLinkChange('stats', idx, 'label', e.target.value)} placeholder="Label (e.g., Homes Sold)" className="flex-1 border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                      <button onClick={() => removeLink('stats', idx)} className="text-red-500 hover:text-red-700">Remove</button>
+                    </div>
+                  ))}
                 </div>
               </div>
 

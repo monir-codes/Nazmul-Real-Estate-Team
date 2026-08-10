@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Menu, Search, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -49,9 +49,27 @@ const Navbar = () => {
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center space-x-8">
           {headerLinks.map((link, idx) => (
-            <Link key={idx} to={link.url} className="text-primary hover:text-accent transition-colors font-medium">
-              {link.label}
-            </Link>
+            <NavLink 
+              key={idx} 
+              to={link.url} 
+              className={({ isActive }) => 
+                `transition-colors font-medium relative py-2 ${isActive ? 'text-accent' : 'text-primary hover:text-accent'}`
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  {link.label}
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-indicator"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent rounded-full"
+                      initial={false}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </>
+              )}
+            </NavLink>
           ))}
         </nav>
 
@@ -94,9 +112,14 @@ const Navbar = () => {
               className="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col space-y-4 z-50 border-t border-gray-100"
             >
               {headerLinks.map((link, idx) => (
-                <Link key={idx} to={link.url} onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                <NavLink 
+                  key={idx} 
+                  to={link.url} 
+                  onClick={() => setIsOpen(false)} 
+                  className={({ isActive }) => `text-lg font-medium ${isActive ? 'text-accent' : 'text-primary'}`}
+                >
                   {link.label}
-                </Link>
+                </NavLink>
               ))}
               <Link to="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full text-center mt-4">Let's Talk</Link>
             </motion.div>

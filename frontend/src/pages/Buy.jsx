@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, Home, DollarSign, Key, CheckCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Search, MapPin, Key, Shield, ArrowRight } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import Loader from '../components/Loader';
@@ -17,6 +17,8 @@ const Buy = () => {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 1000], [0, 300]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -41,18 +43,18 @@ const Buy = () => {
   if (!pageData || hasError) return <PageError message="Unable to load the Buyer's Guide." />;
 
   return (
-    <div className="pt-24 min-h-screen">
+    <div className="pt-24 min-h-screen bg-gray-50">
       <SEO 
         title={`${pageData.title} | Nazmul Real Estate Team`}
         description={pageData.subtitle}
       />
+      
       {/* Cinematic Hero */}
-      <div className="bg-primary text-white min-h-[60vh] py-20 relative overflow-hidden flex flex-col justify-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-70 transform scale-105"
-          style={{ backgroundImage: `url(${pageData.backgroundImage})`, backgroundAttachment: 'fixed' }}
+      <div className="bg-primary text-white h-[60vh] relative overflow-hidden flex flex-col justify-center">
+        <motion.div 
+          className="absolute inset-0 bg-cover bg-center opacity-70"
+          style={{ backgroundImage: `url(${pageData.backgroundImage})`, y, scale: 1.15 }}
         />
-        {/* Sleek Left-to-Right Gradient */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
         
         <div className="container-custom relative z-20 pt-10">
@@ -67,7 +69,7 @@ const Buy = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold mb-6 text-white drop-shadow-2xl leading-tight"
+              className="text-4xl md:text-5xl lg:text-7xl font-serif font-bold mb-6 text-white drop-shadow-2xl leading-tight"
             >
               {pageData.title}
             </motion.h1>

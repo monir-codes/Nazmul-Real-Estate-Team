@@ -17,7 +17,11 @@ const globalSettingsSchema = new mongoose.Schema({
     phone: { type: String },
     email: { type: String },
     address: { type: String }
-  }
+  },
+  stats: [{
+    value: { type: String, required: true },
+    label: { type: String, required: true }
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('GlobalSettings', globalSettingsSchema);

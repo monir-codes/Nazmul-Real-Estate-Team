@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Trash2, Plus, Image as ImageIcon, Loader2 } from 'lucide-react';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
+import AdminLoader from '../../components/AdminLoader';
 
 const HeroSettings = () => {
   const [images, setImages] = useState([]);
@@ -24,6 +25,8 @@ const HeroSettings = () => {
       setLoading(false);
     }
   };
+
+  if (loading) return <AdminLoader message="Loading hero images..." />;
 
   const handleAdd = async (e) => {
     e.preventDefault();

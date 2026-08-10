@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Award, Users, Target, Shield, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Award, Heart, Shield, Users } from 'lucide-react';
 import SEO from '../components/SEO';
 import Loader from '../components/Loader';
 import PageError from '../components/PageError';
@@ -17,6 +16,8 @@ const About = () => {
   const [pageData, setPageData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 1000], [0, 300]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -48,10 +49,10 @@ const About = () => {
       />
       
       {/* Cinematic Hero */}
-      <div className="bg-primary text-white h-[50vh] relative overflow-hidden flex flex-col justify-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-70 transform scale-105"
-          style={{ backgroundImage: `url(${pageData.backgroundImage})`, backgroundAttachment: 'fixed' }}
+      <div className="bg-primary text-white h-[60vh] relative overflow-hidden flex flex-col justify-center">
+        <motion.div 
+          className="absolute inset-0 bg-cover bg-center opacity-70"
+          style={{ backgroundImage: `url(${pageData.backgroundImage})`, y, scale: 1.15 }}
         />
         {/* Sleek Left-to-Right Gradient */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent z-10" />
@@ -68,7 +69,7 @@ const About = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-              className="text-5xl md:text-7xl font-serif font-bold mb-6 text-white drop-shadow-2xl leading-tight"
+              className="text-4xl md:text-5xl lg:text-7xl font-serif font-bold mb-6 text-white drop-shadow-2xl leading-tight"
             >
               {pageData.title}
             </motion.h1>

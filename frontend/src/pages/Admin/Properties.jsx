@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
+import AdminLoader from '../../components/AdminLoader';
 
 const AdminProperties = () => {
   const [properties, setProperties] = useState([]);

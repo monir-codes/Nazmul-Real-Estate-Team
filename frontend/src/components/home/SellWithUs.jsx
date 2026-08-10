@@ -9,18 +9,22 @@ const SellWithUs = () => {
       <div className="container-custom relative z-10">
         <div className="flex flex-col-reverse lg:flex-row items-center gap-16">
           <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-50px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
+            }}
             className="lg:w-1/2"
           >
-            <h2 className="text-4xl font-serif font-bold text-primary mb-6">Thinking About Selling?</h2>
-            <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+            <motion.h2 variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-4xl font-serif font-bold text-primary mb-6">Thinking About Selling?</motion.h2>
+            <motion.p variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-gray-600 mb-8 text-lg leading-relaxed">
               We maximize your property's value through strategic positioning, high-end presentation, and targeted marketing that reaches the right buyers.
-            </p>
+            </motion.p>
             
             <div className="space-y-6 mb-10">
-              <div className="flex items-start">
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex items-start">
                 <div className="bg-surface-dark p-3 rounded-full shadow-sm text-primary mr-4 flex-shrink-0">
                   <TrendingUp className="w-6 h-6" />
                 </div>
@@ -28,8 +32,8 @@ const SellWithUs = () => {
                   <h4 className="font-bold text-primary mb-1">Strategic Pricing</h4>
                   <p className="text-gray-500 text-sm">Data-driven valuation to position your home competitively while maximizing your return on investment.</p>
                 </div>
-              </div>
-              <div className="flex items-start">
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex items-start">
                 <div className="bg-surface-dark p-3 rounded-full shadow-sm text-primary mr-4 flex-shrink-0">
                   <Camera className="w-6 h-6" />
                 </div>
@@ -37,8 +41,8 @@ const SellWithUs = () => {
                   <h4 className="font-bold text-primary mb-1">Premium Presentation</h4>
                   <p className="text-gray-500 text-sm">Professional photography, staging consultations, and immersive virtual tours that make your listing stand out.</p>
                 </div>
-              </div>
-              <div className="flex items-start">
+              </motion.div>
+              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex items-start">
                 <div className="bg-surface-dark p-3 rounded-full shadow-sm text-primary mr-4 flex-shrink-0">
                   <Users className="w-6 h-6" />
                 </div>
@@ -46,13 +50,13 @@ const SellWithUs = () => {
                   <h4 className="font-bold text-primary mb-1">Maximum Exposure</h4>
                   <p className="text-gray-500 text-sm">Targeted digital marketing campaigns, exclusive broker networks, and syndication across top real estate platforms.</p>
                 </div>
-              </div>
+              </motion.div>
             </div>
             
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <Link to="/valuation" className="btn-primary text-center">Get Your Home Value</Link>
               <Link to="/contact" className="btn-secondary text-center">Talk to Our Team</Link>
-            </div>
+            </motion.div>
           </motion.div>
 
           <motion.div 

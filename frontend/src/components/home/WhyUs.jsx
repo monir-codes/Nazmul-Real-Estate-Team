@@ -24,33 +24,61 @@ const REASONS = [
   }
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
+};
+
 const WhyUs = () => {
   return (
     <section className="section-padding bg-primary text-white">
       <div className="container-custom">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-serif font-bold mb-4">Why Choose Nazmul Real Estate</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center mb-16"
+        >
+          <motion.h2 variants={itemVariants} className="text-4xl font-serif font-bold mb-4">Why Choose Nazmul Real Estate</motion.h2>
+          <motion.p variants={itemVariants} className="text-gray-400 max-w-2xl mx-auto">
             We don't just facilitate transactions; we build relationships and deliver results through a commitment to excellence and integrity.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+        >
           {REASONS.map((reason, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-white/5 border border-white/10 p-8 rounded-lg hover:bg-white/10 transition-colors"
+              variants={itemVariants}
+              whileHover={{ y: -10, transition: { duration: 0.2 } }}
+              className="bg-white/5 border border-white/10 p-8 rounded-lg hover:bg-white/10 transition-colors shadow-lg hover:shadow-2xl"
             >
               <div className="mb-6">{reason.icon}</div>
               <h3 className="text-xl font-bold mb-3 text-white">{reason.title}</h3>
               <p className="text-gray-400 text-sm leading-relaxed">{reason.description}</p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

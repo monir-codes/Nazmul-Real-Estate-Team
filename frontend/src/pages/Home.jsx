@@ -19,6 +19,13 @@ const Home = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [heroImages, setHeroImages] = useState(DEFAULT_HERO_IMAGES);
 
+  const [stats, setStats] = useState([
+    { value: '500+', label: 'Homes Sold' },
+    { value: '15+', label: 'Years Experience' },
+    { value: '12', label: 'Local Markets' },
+    { value: '99%', label: 'Client Satisfaction' }
+  ]);
+
   // Fetch dynamic images from API
   useEffect(() => {
     const fetchHeroImages = async () => {
@@ -31,7 +38,18 @@ const Home = () => {
         console.error("Failed to fetch hero images", err);
       }
     };
+    const fetchGlobalSettings = async () => {
+      try {
+        const res = await api.get('/settings/global');
+        if (res.data && res.data.stats && res.data.stats.length > 0) {
+          setStats(res.data.stats);
+        }
+      } catch (err) {
+        console.error("Failed to fetch global settings", err);
+      }
+    };
     fetchHeroImages();
+    fetchGlobalSettings();
   }, []);
 
   // Auto-slide effect
@@ -91,22 +109,18 @@ const Home = () => {
       <section className="bg-surface py-12 border-b border-gray-200">
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-serif font-bold text-primary mb-2">500+</div>
-              <div className="text-gray-600 font-medium">Homes Sold</div>
-            </div>
-            <div>
-              <div className="text-4xl font-serif font-bold text-primary mb-2">15+</div>
-              <div className="text-gray-600 font-medium">Years Experience</div>
-            </div>
-            <div>
-              <div className="text-4xl font-serif font-bold text-primary mb-2">12</div>
-              <div className="text-gray-600 font-medium">Local Markets</div>
-            </div>
-            <div>
-              <div className="text-4xl font-serif font-bold text-primary mb-2">99%</div>
-              <div className="text-gray-600 font-medium">Client Satisfaction</div>
-            </div>
+            {stats.map((stat, idx) => (
+              <motion.div 
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+              >
+                <div className="text-4xl font-serif font-bold text-primary mb-2">{stat.value}</div>
+                <div className="text-gray-600 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>

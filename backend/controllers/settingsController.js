@@ -107,7 +107,13 @@ const defaultGlobalSettings = {
     phone: '1-800-555-0199',
     email: 'contact@nazmulrealestate.com',
     address: '123 Luxury Ave, Beverly Hills, CA 90210'
-  }
+  },
+  stats: [
+    { value: '500+', label: 'Homes Sold' },
+    { value: '15+', label: 'Years Experience' },
+    { value: '12', label: 'Local Markets' },
+    { value: '99%', label: 'Client Satisfaction' }
+  ]
 };
 
 // @desc    Get global settings (links, contact info)
@@ -136,6 +142,7 @@ exports.updateGlobalSettings = async (req, res) => {
       settings.footerLinks = req.body.footerLinks || settings.footerLinks;
       settings.socialLinks = req.body.socialLinks || settings.socialLinks;
       settings.contactInfo = req.body.contactInfo || settings.contactInfo;
+      if (req.body.stats) settings.stats = req.body.stats;
       await settings.save();
     } else {
       settings = await GlobalSettings.create(req.body);

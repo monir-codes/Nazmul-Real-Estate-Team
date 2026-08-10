@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Home, Users, MessageSquare, TrendingUp } from 'lucide-react';
 import api from '../../utils/api';
+import AdminLoader from '../../components/AdminLoader';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
