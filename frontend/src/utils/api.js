@@ -19,7 +19,10 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('adminToken') || localStorage.getItem('clientToken');
+  // Prevent token conflicts: use adminToken for /admin routes, clientToken for others
+  const isAdminRoute = window.location.pathname.startsWith('/admin');
+  const token = localStorage.getItem(isAdminRoute ? 'adminToken' : 'clientToken');
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
