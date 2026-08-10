@@ -83,11 +83,11 @@ const BlogPost = () => {
           className="bg-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100"
         >
           <div 
-            className="prose prose-lg prose-primary max-w-none"
-            dangerouslySetInnerHTML={{ __thtml: post.content }} // Note: in real app use DOMPurify
-          />
+            className="prose prose-lg prose-primary max-w-none whitespace-pre-wrap text-gray-700 leading-relaxed font-sans"
+          >
+            {post.content}
+          </div>
           
-          {/* We're rendering raw HTML, normally you'd use a markdown parser or HTML sanitizer here */}
           <div className="mt-12 pt-8 border-t border-gray-200">
             <Link to="/blog" className="inline-flex items-center text-primary font-semibold hover:text-accent transition-colors">
               <ArrowLeft className="w-5 h-5 mr-2" /> Back to all articles

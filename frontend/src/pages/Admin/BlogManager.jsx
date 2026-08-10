@@ -250,14 +250,14 @@ const BlogManager = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Content (Supports HTML)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Full Content (Just write normally! Press Enter for paragraphs)</label>
                 <textarea 
                   required 
-                  rows="12" 
+                  rows="15" 
                   value={formData.content} 
                   onChange={e => setFormData({...formData, content: e.target.value})} 
-                  placeholder="<p>Write your blog post content here...</p>"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-primary outline-none"
+                  placeholder="Write your blog post content here. No HTML required! Just type normally and it will automatically look professional on the live site..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary outline-none whitespace-pre-wrap leading-relaxed"
                 ></textarea>
               </div>
 
