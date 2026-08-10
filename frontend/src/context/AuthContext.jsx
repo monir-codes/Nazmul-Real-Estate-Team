@@ -1,4 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
+import { auth, googleProvider } from '../config/firebase';
+import { signInWithPopup } from 'firebase/auth';
 import api from '../utils/api';
 
 const AuthContext = createContext();
@@ -59,9 +61,6 @@ export const AuthProvider = ({ children }) => {
     const res = await api.get('/auth/profile');
     setUser(res.data);
   };
-
-import { auth, googleProvider } from '../config/firebase';
-import { signInWithPopup } from 'firebase/auth';
 
   const loginWithGoogle = async () => {
     try {
