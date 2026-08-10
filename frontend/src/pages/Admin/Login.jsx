@@ -2,32 +2,30 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, ShieldAlert, Fingerprint } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SECURITY_PASSPHRASE } from '../../config/security';
+import api from '../../utils/api';
 
 const AdminLogin = () => {
-  const [passphrase, setPassphrase] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [status, setStatus] = useState('idle'); // idle, checking, granted, denied
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (!passphrase) return;
+    if (!email || !password) return;
 
     setStatus('checking');
 
-    // Simulate a complex security check delay
-    setTimeout(() => {
-      // Check against the imported passphrase
-      if (passphrase.trim().toLowerCase() === SECURITY_PASSPHRASE.toLowerCase()) {
-        setStatus('granted');
-        // Set a mock token
-        localStorage.setItem('adminToken', 'security_chamber_cleared');
-        setTimeout(() => navigate('/admin/dashboard'), 1500);
-      } else {
-        setStatus('denied');
-        setTimeout(() => setStatus('idle'), 2000);
-      }
-    }, 1200);
+    try {
+      const res = await api.post('/auth/login', { email, password });
+      setStatus('granted');
+      localStorage.setItem('adminToken', res.data.token);
+      setTimeout(() => navigate('/admin/dashboard'), 1500);
+    } catch (err) {
+      console.error(err);
+      setStatus('denied');
+      setTimeout(() => setStatus('idle'), 2000);
+    }
   };
 
   return (
@@ -70,16 +68,29 @@ const AdminLogin = () => {
                 <p className="text-cyan-500/80 mb-8 text-sm uppercase tracking-widest">Awaiting Identification</p>
 
                 <form onSubmit={handleLogin} className="space-y-6">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest text-left">Who is here?</label>
-                    <input 
-                      required 
-                      type="password" 
-                      className="w-full px-4 py-4 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none text-white text-center tracking-widest transition-all"
-                      placeholder="Enter passphrase"
-                      value={passphrase}
-                      onChange={(e) => setPassphrase(e.target.value)}
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest text-left">Email Identity</label>
+                      <input 
+                        required 
+                        type="email" 
+                        className="w-full px-4 py-4 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none text-white text-center tracking-widest transition-all"
+                        placeholder="admin@nazmulrealestate.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest text-left">Passphrase</label>
+                      <input 
+                        required 
+                        type="password" 
+                        className="w-full px-4 py-4 bg-gray-900/50 border border-gray-700 rounded-lg focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500 outline-none text-white text-center tracking-widest transition-all"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                    </div>
                   </div>
 
                   <button 

@@ -25,7 +25,7 @@ const Valuation = () => {
         email: formData.email,
         phone: formData.phone,
         type: 'Valuation',
-        propertyAddress: `${formData.address}, ${formData.city}, ${formData.zip}`,
+        propertyAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zip}`,
         message: 'Requested a Home Valuation'
       });
       setSubmitted(true);
@@ -92,12 +92,19 @@ const Valuation = () => {
                 </div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
                   <input 
                     required type="text" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
                     onChange={e => setFormData({...formData, city: e.target.value})}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+                  <input 
+                    required type="text" className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                    onChange={e => setFormData({...formData, state: e.target.value})}
                   />
                 </div>
                 <div>

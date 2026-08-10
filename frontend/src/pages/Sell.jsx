@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Camera, TrendingUp, Shield, Users, ArrowRight, Target } from 'lucide-react';
+import { Camera, TrendingUp, Shield, Users, ArrowRight, Crosshair } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
@@ -106,7 +106,7 @@ const Sell = () => {
               <div className="space-y-6">
                 {[
                   { icon: Camera, title: "Professional Media", desc: "High-end photography, cinematic video tours, and drone footage." },
-                  { icon: Target, title: "Targeted Advertising", desc: "Strategic digital campaigns reaching qualified buyers globally." },
+                  { icon: Crosshair, title: "Targeted Advertising", desc: "Strategic digital campaigns reaching qualified buyers globally." },
                   { icon: Users, title: "Exclusive Network", desc: "Direct access to our private network of high-net-worth individuals." },
                   { icon: TrendingUp, title: "Data-Driven Pricing", desc: "Advanced analytics to position your home perfectly in the market." }
                 ].map((item, index) => (

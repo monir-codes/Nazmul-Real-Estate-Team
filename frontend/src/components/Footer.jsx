@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Globe, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
+import { Globe, Mail, Phone, MapPin, Link as LinkIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
 
@@ -24,11 +24,6 @@ const Footer = () => {
   }, []);
 
   const getIconForPlatform = (platform) => {
-    const p = platform.toLowerCase();
-    if (p.includes('facebook')) return <Facebook className="w-5 h-5" />;
-    if (p.includes('instagram')) return <Instagram className="w-5 h-5" />;
-    if (p.includes('linkedin')) return <Linkedin className="w-5 h-5" />;
-    if (p.includes('twitter') || p.includes('x')) return <Twitter className="w-5 h-5" />;
     return <Globe className="w-5 h-5" />;
   };
 

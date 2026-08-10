@@ -8,7 +8,7 @@ const AdminLayout = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
-    if (token !== 'security_chamber_cleared') {
+    if (!token) {
       navigate('/admin/login');
     }
   }, [navigate, location.pathname]);

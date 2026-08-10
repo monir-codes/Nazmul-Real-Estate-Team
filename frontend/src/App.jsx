@@ -41,6 +41,16 @@ function App() {
           <Route path="/about" element={<PageTransition><About /></PageTransition>} />
           <Route path="/team" element={<PageTransition><Team /></PageTransition>} />
           <Route path="/areas" element={<PageTransition><AreasWeServe /></PageTransition>} />
+          
+          {/* Catch-all 404 Page */}
+          <Route path="*" element={<PageTransition>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+              <h1 className="text-6xl font-serif font-bold text-primary mb-4">404</h1>
+              <h2 className="text-2xl text-gray-600 mb-8">Page Not Found</h2>
+              <p className="text-gray-500 max-w-md mb-8">The page you are looking for doesn't exist or has been moved.</p>
+              <a href="/" className="btn-primary">Return Home</a>
+            </div>
+          </PageTransition>} />
         </Route>
 
         {/* Admin Login (No Sidebar) */}
