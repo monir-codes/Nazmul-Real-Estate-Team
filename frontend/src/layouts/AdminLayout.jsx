@@ -1,9 +1,17 @@
+import { useEffect } from 'react';
 import { Outlet, Link, useNavigate, NavLink, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare, Image as ImageIcon, Building2, UserPlus } from 'lucide-react';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (token !== 'security_chamber_cleared') {
+      navigate('/admin/login');
+    }
+  }, [navigate, location.pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');

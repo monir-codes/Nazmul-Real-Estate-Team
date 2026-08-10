@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, ShieldAlert, Fingerprint } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SECURITY_PASSPHRASE } from '../../config/security';
 
 const AdminLogin = () => {
   const [passphrase, setPassphrase] = useState('');
@@ -16,9 +17,8 @@ const AdminLogin = () => {
 
     // Simulate a complex security check delay
     setTimeout(() => {
-      // The user requested exactly " Nazmul is here " or similar. 
-      // We will check case-insensitive and allow slight spacing differences.
-      if (passphrase.trim().toLowerCase() === 'nazmul is here') {
+      // Check against the imported passphrase
+      if (passphrase.trim().toLowerCase() === SECURITY_PASSPHRASE.toLowerCase()) {
         setStatus('granted');
         // Set a mock token
         localStorage.setItem('adminToken', 'security_chamber_cleared');
