@@ -41,10 +41,19 @@ const Contact = () => {
 
     try {
       // 2. Send email notification via EmailJS
-      await emailjs.sendForm(
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        interest: formData.interest,
+        message: formData.message,
+        to_name: 'Nazmul Real Estate Team'
+      };
+
+      await emailjs.send(
         import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_placeholder',
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_placeholder',
-        formRef.current,
+        templateParams,
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'public_key_placeholder'
       );
       setSubmitted(true);
@@ -147,7 +156,7 @@ const Contact = () => {
                         <input 
                           required 
                           type="text" 
-                          name="from_name"
+                          name="name"
                           value={formData.name}
                           className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none transition-shadow" 
                           placeholder="Your full name"
@@ -162,7 +171,7 @@ const Contact = () => {
                         <input 
                           required 
                           type="email" 
-                          name="from_email"
+                          name="email"
                           value={formData.email}
                           className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none transition-shadow" 
                           placeholder="you@example.com"
@@ -179,7 +188,7 @@ const Contact = () => {
                         <Phone className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
                         <input 
                           type="tel" 
-                          name="from_phone"
+                          name="phone"
                           value={formData.phone}
                           className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none transition-shadow" 
                           placeholder="(555) 000-0000"
@@ -220,8 +229,7 @@ const Contact = () => {
                     </div>
                   </div>
 
-                  {/* Hidden field for EmailJS template */}
-                  <input type="hidden" name="to_name" value="Nazmul Real Estate Team" />
+                  </div>
 
                   <button type="submit" disabled={submitting} className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                     {submitting ? (

@@ -19,6 +19,7 @@ const authRoutes = require('../routes/authRoutes');
 const heroRoutes = require('../routes/heroRoutes');
 const settingsRoutes = require('../routes/settingsRoutes');
 const teamRoutes = require('../routes/teamRoutes');
+const userRoutes = require('../routes/userRoutes');
 const connectDB = require('../config/db');
 
 // Connect to DB on each request (Serverless friendly)
@@ -44,6 +45,7 @@ app.use('/api/hero', heroRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/team', teamRoutes);
 app.use('/api/posts', require('../routes/postRoutes'));
+app.use('/api/users', userRoutes);
 
 // Only listen locally, Vercel will use the exported app
 if (process.env.NODE_ENV !== 'production') {

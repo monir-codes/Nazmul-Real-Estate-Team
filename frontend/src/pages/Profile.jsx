@@ -1,0 +1,141 @@
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { UserCircle2, Mail, Lock, Loader2, CheckCircle2 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import api from '../utils/api';
+import SEO from '../components/SEO';
+
+const Profile = () => {
+  const { user, refreshProfile } = useAuth();
+  const [name, setName] = useState(user?.name || '');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (password && password !== confirmPassword) {
+      return toast.error("Passwords do not match!");
+    }
+
+    setLoading(true);
+    try {
+      const payload = { name };
+      if (password) {
+        payload.password = password;
+      }
+
+      await api.put('/auth/profile', payload);
+      await refreshProfile();
+      toast.success("Profile updated successfully");
+      setPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="pt-32 pb-20 min-h-screen bg-gray-50 flex items-center justify-center">
+      <SEO title="My Profile | Nazmul Real Estate" description="Manage your account settings." />
+      
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-xl w-full mx-auto p-8 bg-white rounded-2xl shadow-premium border border-gray-100"
+      >
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-accent/20">
+            <UserCircle2 className="w-10 h-10 text-accent" />
+          </div>
+          <h1 className="text-3xl font-serif font-bold text-primary">My Profile</h1>
+          <p className="text-gray-500 mt-2">Manage your account information</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <div className="relative">
+              <Mail className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+              <input 
+                type="email" 
+                disabled
+                value={user.email}
+                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed"
+              />
+            </div>
+            <p className="text-xs text-gray-400 mt-1">Email cannot be changed.</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
+            <div className="relative">
+              <UserCircle2 className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+              <input 
+                type="text" 
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent outline-none transition-all"
+                placeholder="Your Name"
+              />
+            </div>
+          </div>
+          
+          <div className="pt-4 border-t border-gray-100">
+            <h3 className="text-lg font-serif text-primary mb-4">Change Password</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                <div className="relative">
+                  <Lock className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+                  <input 
+                    type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent outline-none transition-all"
+                    placeholder="Leave blank to keep current"
+                  />
+                </div>
+              </div>
+
+              {password && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+                  <div className="relative">
+                    <CheckCircle2 className="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
+                    <input 
+                      type="password" 
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent outline-none transition-all"
+                      placeholder="Confirm your new password"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="w-full btn-accent py-3 flex justify-center mt-6 items-center"
+          >
+            {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Saving Changes...</> : 'Save Changes'}
+          </button>
+        </form>
+      </motion.div>
+    </div>
+  );
+};
+
+export default Profile;

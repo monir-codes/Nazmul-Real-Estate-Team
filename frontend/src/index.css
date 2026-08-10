@@ -33,15 +33,15 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white px-6 py-3 rounded-md font-medium transition-colors hover:bg-primary-light shadow-premium;
+    @apply bg-primary text-white px-6 py-3 rounded-md font-medium transition-all duration-300 hover:bg-primary-light shadow-premium hover:shadow-2xl hover:-translate-y-1;
   }
   
   .btn-secondary {
-    @apply bg-transparent border border-primary text-primary px-6 py-3 rounded-md font-medium transition-colors hover:bg-surface-dark;
+    @apply bg-transparent border border-primary text-primary px-6 py-3 rounded-md font-medium transition-all duration-300 hover:bg-surface-dark hover:-translate-y-1;
   }
   
   .btn-accent {
-    @apply bg-accent text-white px-6 py-3 rounded-md font-medium transition-colors hover:bg-accent-hover shadow-premium;
+    @apply bg-accent text-white px-6 py-3 rounded-md font-medium transition-all duration-300 hover:bg-accent-hover shadow-premium hover:shadow-2xl hover:-translate-y-1;
   }
   
   .section-padding {

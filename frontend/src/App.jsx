@@ -18,6 +18,7 @@ import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 
 import AdminLogin from './pages/Admin/Login';
 import AdminProperties from './pages/Admin/Properties';
@@ -26,14 +27,18 @@ import HeroSettings from './pages/Admin/HeroSettings';
 import AdminSettings from './pages/Admin/Settings';
 import AdminTeam from './pages/Admin/Team';
 import BlogManager from './pages/Admin/BlogManager';
+import AdminUsers from './pages/Admin/Users';
 import PageTransition from './components/PageTransition';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
+    <>
+      <ScrollToTop />
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<PageTransition><Home /></PageTransition>} />
@@ -50,6 +55,7 @@ function App() {
           <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
           <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
           <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
+          <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
           
           {/* Catch-all 404 Page */}
           <Route path="*" element={<PageTransition>
@@ -75,9 +81,11 @@ function App() {
           <Route path="hero" element={<HeroSettings />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="team" element={<AdminTeam />} />
+          <Route path="users" element={<AdminUsers />} />
         </Route>
       </Routes>
     </AnimatePresence>
+    </>
   );
 }
 

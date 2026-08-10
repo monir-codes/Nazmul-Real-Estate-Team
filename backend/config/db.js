@@ -12,7 +12,7 @@ async function connectDB() {
   }
 
   if (!cached.promise) {
-    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/nazmul-real-estate';
+    const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/nazmul-real-estate';
     const opts = {
       bufferCommands: false,
     };

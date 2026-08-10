@@ -42,10 +42,22 @@ const Valuation = () => {
 
     try {
       // 2. Send email notification via EmailJS
-      await emailjs.sendForm(
+      const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        zip: formData.zip,
+        message: `Home Valuation Request for: ${formData.address}, ${formData.city}, ${formData.state} ${formData.zip}`,
+        to_name: 'Nazmul Real Estate Team'
+      };
+
+      await emailjs.send(
         import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_placeholder',
         import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_placeholder',
-        formRef.current,
+        templateParams,
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'public_key_placeholder'
       );
       setSubmitted(true);
@@ -158,7 +170,7 @@ const Valuation = () => {
                 <div className="relative">
                   <User className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
                   <input 
-                    required type="text" name="from_name" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                    required type="text" name="name" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
                     placeholder="Your full name"
                     onChange={e => setFormData({...formData, name: e.target.value})}
                   />
@@ -171,7 +183,7 @@ const Valuation = () => {
                   <div className="relative">
                     <Mail className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
                     <input 
-                      required type="email" name="from_email" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                      required type="email" name="email" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
                       placeholder="you@example.com"
                       onChange={e => setFormData({...formData, email: e.target.value})}
                     />
@@ -182,17 +194,13 @@ const Valuation = () => {
                   <div className="relative">
                     <Phone className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
                     <input 
-                      required type="tel" name="from_phone" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
+                      required type="tel" name="phone" className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-accent outline-none"
                       placeholder="(555) 000-0000"
                       onChange={e => setFormData({...formData, phone: e.target.value})}
                     />
                   </div>
                 </div>
               </div>
-
-              {/* Hidden fields for EmailJS template */}
-              <input type="hidden" name="to_name" value="Nazmul Real Estate Team" />
-              <input type="hidden" name="message" value={`Home Valuation Request for: ${formData.address}, ${formData.city}, ${formData.state} ${formData.zip}`} />
 
               <button type="submit" disabled={submitting} className="btn-accent w-full text-lg mt-4 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                 {submitting ? (

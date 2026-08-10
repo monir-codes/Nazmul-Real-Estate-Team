@@ -21,11 +21,11 @@ const AdminLayout = () => {
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Properties', path: '/admin/properties', icon: Building2 },
-    { name: 'Leads (CRM)', path: '/admin/leads', icon: Users },
+    { name: 'Leads & Messages', path: '/admin/leads', icon: MessageSquare },
+    { name: 'User Management', path: '/admin/users', icon: Users },
+    { name: 'Team Members', path: '/admin/team', icon: UserPlus },
     { name: 'Blog Manager', path: '/admin/blog', icon: FileText },
-    { name: 'Hero Settings', path: '/admin/hero', icon: ImageIcon },
     { name: 'Page Builder', path: '/admin/settings', icon: Settings },
-    { name: 'Manage Team', path: '/admin/team', icon: UserPlus },
   ];
 
   return (

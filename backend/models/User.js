@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['admin', 'agent', 'client'], default: 'client' },
+  isBanned: { type: Boolean, default: false },
   savedProperties: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' }]
 }, { timestamps: true });
 

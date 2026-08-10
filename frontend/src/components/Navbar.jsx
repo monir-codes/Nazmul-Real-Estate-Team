@@ -104,6 +104,22 @@ const Navbar = () => {
                     <Link to="/listings" onClick={() => setShowProfileMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-accent transition-colors">
                       My Saved Homes
                     </Link>
+                    {user.role === 'admin' && (
+                      <Link 
+                        to="/admin/dashboard" 
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-accent transition-colors"
+                        onClick={() => setShowProfileMenu(false)}
+                      >
+                        <UserCircle className="w-4 h-4 mr-2" /> Admin Dashboard
+                      </Link>
+                    )}
+                    <Link 
+                      to="/profile" 
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-accent transition-colors"
+                      onClick={() => setShowProfileMenu(false)}
+                    >
+                      <UserCircle className="w-4 h-4 mr-2" /> My Profile
+                    </Link>
                     <button 
                       onClick={() => { logout(); setShowProfileMenu(false); }}
                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center"

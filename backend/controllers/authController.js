@@ -14,6 +14,10 @@ const loginUser = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+      if (user.isBanned) {
+        return res.status(403).json({ message: 'Your account has been banned by the administrator.' });
+      }
+
       res.json({
         _id: user._id,
         name: user.name,
@@ -83,6 +87,31 @@ const getProfile = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.name = req.body.name || user.name;
+    
+    if (req.body.password) {
+      user.password = req.body.password; // pre-save hook will hash it
+    }
+
+    const updatedUser = await user.save();
+    
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      token: generateToken(updatedUser._id), // Optionally regenerate token
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 const toggleFavorite = async (req, res) => {
   const { propertyId } = req.body;
   try {
@@ -114,6 +143,10 @@ const googleAuth = async (req, res) => {
       user = await User.create({ name, email, password: randomPassword, role: 'client' });
     }
 
+    if (user.isBanned) {
+      return res.status(403).json({ message: 'Your account has been banned by the administrator.' });
+    }
+
     res.json({
       _id: user._id,
       name: user.name,
@@ -126,4 +159,4 @@ const googleAuth = async (req, res) => {
   }
 };
 
-module.exports = { loginUser, registerUser, getProfile, toggleFavorite, seedAdmin, googleAuth };
+module.exports = { loginUser, registerUser, getProfile, updateProfile, toggleFavorite, seedAdmin, googleAuth };
