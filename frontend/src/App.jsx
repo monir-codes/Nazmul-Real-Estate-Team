@@ -14,6 +14,10 @@ import About from './pages/About';
 import Team from './pages/Team';
 import AreasWeServe from './pages/AreasWeServe';
 import PropertyDetails from './pages/PropertyDetails';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 import AdminLogin from './pages/Admin/Login';
 import AdminProperties from './pages/Admin/Properties';
@@ -41,6 +45,10 @@ function App() {
           <Route path="/about" element={<PageTransition><About /></PageTransition>} />
           <Route path="/team" element={<PageTransition><Team /></PageTransition>} />
           <Route path="/areas" element={<PageTransition><AreasWeServe /></PageTransition>} />
+          <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
+          <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
+          <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
+          <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
           
           {/* Catch-all 404 Page */}
           <Route path="*" element={<PageTransition>

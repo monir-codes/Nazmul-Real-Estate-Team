@@ -1,13 +1,16 @@
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, Search, X } from 'lucide-react';
+import { Menu, X, UserCircle, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [headerLinks, setHeaderLinks] = useState([]);
+  const { user, logout } = useAuth();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     const fetchGlobalSettings = async () => {
@@ -74,10 +77,48 @@ const Navbar = () => {
         </nav>
 
         {/* Right Actions */}
-        <div className="hidden lg:flex items-center space-x-6">
+        <div className="hidden lg:flex items-center space-x-6 relative">
           <Link to="/contact" className="btn-primary">
             Let's Talk
           </Link>
+
+          {/* User Portal */}
+          {user ? (
+            <div className="relative">
+              <button 
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center space-x-2 text-primary hover:text-accent transition-colors focus:outline-none"
+              >
+                <UserCircle className="w-6 h-6" />
+                <span className="font-medium text-sm hidden xl:inline-block">{user.name.split(' ')[0]}</span>
+              </button>
+              
+              <AnimatePresence>
+                {showProfileMenu && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-premium border border-gray-100 py-2 z-50"
+                  >
+                    <Link to="/listings" onClick={() => setShowProfileMenu(false)} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-accent transition-colors">
+                      My Saved Homes
+                    </Link>
+                    <button 
+                      onClick={() => { logout(); setShowProfileMenu(false); }}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" /> Sign Out
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <Link to="/login" className="flex items-center text-primary hover:text-accent transition-colors font-medium">
+              <UserCircle className="w-5 h-5 mr-1.5" /> Sign In
+            </Link>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -118,6 +159,24 @@ const Navbar = () => {
                   {link.label}
                 </NavLink>
               ))}
+              
+              <div className="h-px bg-gray-100 w-full my-2"></div>
+              
+              {user ? (
+                <>
+                  <Link to="/listings" onClick={() => setIsOpen(false)} className="text-lg font-medium text-primary flex items-center">
+                    <UserCircle className="w-5 h-5 mr-2" /> My Saved Homes
+                  </Link>
+                  <button onClick={() => { logout(); setIsOpen(false); }} className="text-lg font-medium text-red-600 text-left flex items-center">
+                    <LogOut className="w-5 h-5 mr-2" /> Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link to="/login" onClick={() => setIsOpen(false)} className="text-lg font-medium text-primary flex items-center">
+                  <UserCircle className="w-5 h-5 mr-2" /> Sign In / Register
+                </Link>
+              )}
+
               <Link to="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full text-center mt-4">Let's Talk</Link>
             </motion.div>
           </>

@@ -4,16 +4,19 @@ import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { WishlistProvider } from './context/WishlistContext.jsx';
+import { AuthProvider } from './context/AuthContext.jsx';
 import './index.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <HelmetProvider>
-      <WishlistProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </WishlistProvider>
+      <AuthProvider>
+        <WishlistProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </WishlistProvider>
+      </AuthProvider>
     </HelmetProvider>
   </StrictMode>,
 );

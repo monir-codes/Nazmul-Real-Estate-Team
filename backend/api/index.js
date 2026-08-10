@@ -43,6 +43,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/hero', heroRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/team', teamRoutes);
+app.use('/api/posts', require('../routes/postRoutes'));
 
 // Only listen locally, Vercel will use the exported app
 if (process.env.NODE_ENV !== 'production') {

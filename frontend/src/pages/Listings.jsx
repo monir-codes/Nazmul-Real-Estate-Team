@@ -1,10 +1,24 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, MapPin, Filter, Bed, Bath, Square, Heart } from 'lucide-react';
+import { Search, MapPin, Filter, Bed, Bath, Square, Heart, Map as MapIcon, List as ListIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import SEO from '../components/SEO';
 import api from '../utils/api';
 import { useWishlist } from '../context/WishlistContext';
+
+// Fix leaflet default icon issue in React
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+});
+L.Marker.prototype.options.icon = DefaultIcon;
 
 const defaultProperties = [
   {
@@ -18,7 +32,8 @@ const defaultProperties = [
     sqft: 4200,
     status: 'For Sale',
     propertyType: 'Single Family',
-    images: ['https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80']
+    images: ['https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80'],
+    coordinates: { lat: 34.0736, lng: -118.4004 }
   },
   {
     _id: 'fallback-2',
@@ -31,7 +46,8 @@ const defaultProperties = [
     sqft: 3800,
     status: 'For Sale',
     propertyType: 'Waterfront',
-    images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80']
+    images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80'],
+    coordinates: { lat: 34.0259, lng: -118.7798 }
   },
   {
     _id: 'fallback-3',
@@ -44,48 +60,17 @@ const defaultProperties = [
     sqft: 2800,
     status: 'Pending',
     propertyType: 'Modern Villa',
-    images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80']
-  },
-  {
-    _id: 'fallback-4',
-    address: '456 Wilshire Blvd',
-    city: 'Santa Monica',
-    state: 'CA',
-    price: 4200000,
-    beds: 6,
-    baths: 5,
-    sqft: 5500,
-    status: 'For Sale',
-    propertyType: 'Luxury Estate',
-    images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80']
-  },
-  {
-    _id: 'fallback-5',
-    address: '312 Pacific Coast Hwy',
-    city: 'Laguna Beach',
-    state: 'CA',
-    price: 2850000,
-    beds: 4,
-    baths: 4,
-    sqft: 3600,
-    status: 'For Sale',
-    propertyType: 'Contemporary',
-    images: ['https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80']
-  },
-  {
-    _id: 'fallback-6',
-    address: '1100 Bel Air Road',
-    city: 'Bel Air',
-    state: 'CA',
-    price: 5600000,
-    beds: 7,
-    baths: 6,
-    sqft: 7200,
-    status: 'For Sale',
-    propertyType: 'Mansion',
-    images: ['https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80']
+    images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80'],
+    coordinates: { lat: 34.1166, lng: -118.3524 }
   }
 ];
+
+// Helper component to recenter map when properties change
+function ChangeView({ center, zoom }) {
+  const map = useMap();
+  map.setView(center, zoom);
+  return null;
+}
 
 const Listings = () => {
   const [properties, setProperties] = useState([]);
@@ -93,6 +78,7 @@ const Listings = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [viewMode, setViewMode] = useState('all'); // 'all' or 'wishlist'
+  const [mobileView, setMobileView] = useState('map'); // 'map' or 'list' for mobile toggle
   const { wishlist, toggleWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
@@ -122,154 +108,189 @@ const Listings = () => {
     return matchesSearch && matchesFilter && matchesViewMode;
   });
 
+  // Calculate map center based on filtered properties
+  const mapCenter = filteredProperties.length > 0 && filteredProperties[0].coordinates 
+    ? [filteredProperties[0].coordinates.lat, filteredProperties[0].coordinates.lng] 
+    : [34.0522, -118.2437]; // Default to LA
+
   return (
-    <div className="pt-24 min-h-screen bg-gray-50 pb-20">
+    <div className="pt-20 h-screen flex flex-col bg-gray-50 overflow-hidden">
       <SEO 
-        title="Luxury Homes for Sale | Nazmul Real Estate Team"
-        description="Browse our exclusive collection of luxury homes and premium real estate listings in the most sought-after neighborhoods."
+        title="Interactive Map Search | Nazmul Real Estate Team"
+        description="Search luxury homes and premium real estate listings on our interactive map."
       />
-      {/* Search Header */}
-      <div className="bg-white border-b border-gray-200 py-8">
+      
+      {/* Top Search Bar & Filters */}
+      <div className="bg-white border-b border-gray-200 py-4 z-20 shadow-sm flex-shrink-0">
         <div className="container-custom">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-            <h1 className="text-3xl font-serif font-bold text-primary">Explore Properties</h1>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             
-            {/* View Mode Toggle */}
-            <div className="flex bg-gray-100 p-1 rounded-lg">
-              <button 
-                onClick={() => setViewMode('all')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${viewMode === 'all' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
-              >
-                All Listings
-              </button>
-              <button 
-                onClick={() => setViewMode('wishlist')}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors flex items-center ${viewMode === 'wishlist' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
-              >
-                <Heart className={`w-4 h-4 mr-2 ${viewMode === 'wishlist' ? 'fill-red-500 text-red-500' : ''}`} /> My Wishlist
-              </button>
-            </div>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-grow">
-              <MapPin className="absolute left-4 top-3.5 text-gray-400 w-5 h-5" />
+            {/* Search Input */}
+            <div className="relative w-full md:w-96 flex-shrink-0">
+              <Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
               <input 
                 type="text" 
-                placeholder="City, Neighborhood, or ZIP..."
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+                placeholder="Search by city, neighborhood, or address..." 
+                className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent outline-none text-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex space-x-4">
-              <select 
-                className="px-6 py-3 border border-gray-300 rounded-md flex items-center bg-white"
-                value={activeFilter}
-                onChange={(e) => setActiveFilter(e.target.value)}
-              >
-                <option value="All">All Statuses</option>
-                <option value="For Sale">For Sale</option>
-                <option value="Pending">Pending</option>
-                <option value="Sold">Sold</option>
-              </select>
-              <button className="btn-primary flex items-center">
-                <Search className="w-5 h-5 mr-2" /> Search
-              </button>
+
+            {/* Filters */}
+            <div className="flex flex-wrap items-center gap-3 w-full md:w-auto overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
+              <div className="flex bg-gray-100 p-1 rounded-lg flex-shrink-0">
+                {['All', 'For Sale', 'Pending', 'Sold'].map(filter => (
+                  <button 
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-md whitespace-nowrap transition-colors ${activeFilter === filter ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+              
+              <div className="h-6 w-px bg-gray-300 hidden md:block"></div>
+
+              {/* View Mode */}
+              <div className="flex bg-gray-100 p-1 rounded-lg flex-shrink-0">
+                <button 
+                  onClick={() => setViewMode('all')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${viewMode === 'all' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  All
+                </button>
+                <button 
+                  onClick={() => setViewMode('wishlist')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors flex items-center ${viewMode === 'wishlist' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  <Heart className={`w-4 h-4 mr-1 ${viewMode === 'wishlist' ? 'fill-red-500 text-red-500' : ''}`} /> Saved
+                </button>
+              </div>
+
+              {/* Mobile View Toggle */}
+              <div className="flex md:hidden bg-gray-100 p-1 rounded-lg flex-shrink-0 ml-auto">
+                <button 
+                  onClick={() => setMobileView('map')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors flex items-center ${mobileView === 'map' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  <MapIcon className="w-4 h-4 mr-1" /> Map
+                </button>
+                <button 
+                  onClick={() => setMobileView('list')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors flex items-center ${mobileView === 'list' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-900'}`}
+                >
+                  <ListIcon className="w-4 h-4 mr-1" /> List
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Results */}
-      <div className="container-custom py-12">
-        <div className="flex justify-between items-center mb-8">
-          <p className="text-gray-600 font-medium">Showing {filteredProperties.length} {viewMode === 'wishlist' ? 'saved properties' : 'properties'}</p>
-          <select className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent bg-white">
-            <option>Newest</option>
-            <option>Price: Low to High</option>
-            <option>Price: High to Low</option>
-          </select>
+      {/* Main Content Area: Split Screen */}
+      <div className="flex-1 flex overflow-hidden relative">
+        
+        {/* Map Section (Left side on desktop, toggled on mobile) */}
+        <div className={`w-full md:w-1/2 h-full absolute md:relative z-0 transition-opacity duration-300 ${mobileView === 'map' ? 'opacity-100' : 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto'}`}>
+          <MapContainer center={mapCenter} zoom={11} className="w-full h-full z-0">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <ChangeView center={mapCenter} zoom={11} />
+            
+            {filteredProperties.map(property => property.coordinates && (
+              <Marker key={property._id} position={[property.coordinates.lat, property.coordinates.lng]}>
+                <Popup className="custom-popup">
+                  <div className="w-48">
+                    <img src={property.images[0]} alt={property.title} className="w-full h-32 object-cover rounded-t-md mb-2" />
+                    <h4 className="font-bold text-gray-900 text-sm truncate">{property.address}</h4>
+                    <p className="text-accent font-bold">${property.price.toLocaleString()}</p>
+                    <div className="flex text-xs text-gray-500 gap-2 mt-1">
+                      <span>{property.beds} bds</span>
+                      <span>{property.baths} ba</span>
+                      <span>{property.sqft} sqft</span>
+                    </div>
+                    <Link to={`/properties/${property._id}`} className="block text-center bg-primary text-white text-xs py-1.5 mt-2 rounded">
+                      View Details
+                    </Link>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
         </div>
 
-        {loading ? (
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-gray-500">Loading properties...</p>
-          </div>
-        ) : filteredProperties.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-lg border border-gray-100 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-800 mb-2">No properties found</h3>
-            <p className="text-gray-500">
-              {viewMode === 'wishlist' 
-                ? "You haven't saved any properties to your wishlist yet." 
-                : "Try adjusting your search or filters."}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProperties.map((listing, index) => (
-              <motion.div 
-                key={listing._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="group rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-premium transition-all duration-300 border border-gray-100 relative"
-              >
-                <Link to={`/property/${listing._id}`} className="block h-64 overflow-hidden relative">
-                  <img 
-                    src={listing.images && listing.images.length > 0 ? listing.images[0] : 'https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80'} 
-                    alt={listing.address} 
-                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80'; }}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-sm font-medium rounded text-primary shadow-sm">
-                    {listing.status}
-                  </div>
-                </Link>
+        {/* Listings Section (Right side on desktop, toggled on mobile) */}
+        <div className={`w-full md:w-1/2 h-full absolute md:relative bg-gray-50 z-10 transition-transform duration-300 transform md:translate-y-0 overflow-y-auto ${mobileView === 'list' ? 'translate-y-0' : 'translate-y-full md:translate-x-0'}`}>
+          <div className="p-4 md:p-6 pb-24">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-bold text-gray-900">{filteredProperties.length} Homes Found</h2>
+            </div>
 
-                {/* Wishlist Button - Placed outside the Link so clicking it doesn't navigate */}
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {[1, 2, 3, 4].map(n => (
+                  <div key={n} className="bg-gray-200 rounded-xl h-80 animate-pulse"></div>
+                ))}
+              </div>
+            ) : filteredProperties.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {filteredProperties.map(property => (
+                  <motion.div 
+                    key={property._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-premium transition-shadow group relative"
+                  >
+                    <div className="relative h-48 overflow-hidden">
+                      <img 
+                        src={property.images[0]} 
+                        alt={property.title} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+                        {property.status}
+                      </div>
+                      <button 
+                        onClick={(e) => { e.preventDefault(); toggleWishlist(property._id); }}
+                        className="absolute top-4 right-4 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                      >
+                        <Heart className={`w-4 h-4 ${isInWishlist(property._id) ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+                      </button>
+                    </div>
+                    <Link to={`/properties/${property._id}`} className="block p-5">
+                      <div className="text-2xl font-bold text-primary mb-2">${property.price.toLocaleString()}</div>
+                      <div className="flex items-center text-gray-600 mb-3 text-sm">
+                        <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
+                        <span className="truncate">{property.address}, {property.city}, {property.state}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-gray-500 text-sm border-t border-gray-100 pt-3">
+                        <div className="flex items-center"><Bed className="w-4 h-4 mr-1 text-accent" /> {property.beds} Beds</div>
+                        <div className="flex items-center"><Bath className="w-4 h-4 mr-1 text-accent" /> {property.baths} Baths</div>
+                        <div className="flex items-center"><Square className="w-4 h-4 mr-1 text-accent" /> {property.sqft} sqft</div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-white rounded-xl border border-gray-100">
+                <h3 className="text-2xl font-serif text-gray-400 mb-2">No properties found</h3>
+                <p className="text-gray-500">Try adjusting your search criteria</p>
                 <button 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggleWishlist(listing._id);
-                  }}
-                  className="absolute top-4 right-4 p-2.5 rounded-full bg-white/70 backdrop-blur shadow-sm hover:bg-white transition-colors z-10"
+                  onClick={() => { setSearchTerm(''); setActiveFilter('All'); }}
+                  className="btn-secondary mt-6"
                 >
-                  <Heart className={`w-5 h-5 transition-colors ${isInWishlist(listing._id) ? 'fill-red-500 text-red-500' : 'text-gray-600 hover:text-red-500'}`} />
+                  Clear Filters
                 </button>
-
-                <Link to={`/property/${listing._id}`} className="block p-6">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="text-2xl font-serif font-bold text-primary">
-                      ${listing.price?.toLocaleString()}
-                    </div>
-                    <div className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                      {listing.propertyType}
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-800 mb-1 group-hover:text-accent transition-colors">{listing.address}</h3>
-                  <p className="text-gray-500 text-sm mb-4">{listing.city}, {listing.state}</p>
-                  
-                  <div className="flex items-center justify-between border-t border-gray-100 pt-4 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <Bed className="w-4 h-4 mr-2" />
-                      <span>{listing.beds}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Bath className="w-4 h-4 mr-2" />
-                      <span>{listing.baths}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Square className="w-4 h-4 mr-2" />
-                      <span>{listing.sqft?.toLocaleString()} sqft</span>
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
       </div>
     </div>
   );

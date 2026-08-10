@@ -18,6 +18,10 @@ const propertySchema = new mongoose.Schema({
   features: [{ type: String }],
   images: [{ type: String }],
   isFeatured: { type: Boolean, default: false },
+  coordinates: {
+    lat: { type: Number },
+    lng: { type: Number }
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Property', propertySchema);
