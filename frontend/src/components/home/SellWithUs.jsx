@@ -18,10 +18,10 @@ const SellWithUs = ({ content }) => {
             }}
             className="lg:w-1/2"
           >
-            <motion.h2 variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-4xl font-serif font-bold text-white mb-6">
+            <motion.h2 variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-4xl font-serif font-bold text-primary mb-6">
               {content?.title || 'Sell For Top Dollar'}
             </motion.h2>
-            <motion.p variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-gray-300 mb-8 text-lg leading-relaxed">
+            <motion.p variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-gray-600 mb-8 text-lg leading-relaxed">
               {content?.subtitle || 'A strategic, data-driven approach to maximizing your property value.'}
             </motion.p>
             
@@ -30,7 +30,7 @@ const SellWithUs = ({ content }) => {
                 content.points.map((point, index) => (
                   <motion.div key={index} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex items-center">
                     <CheckCircle className="w-5 h-5 text-accent mr-4 flex-shrink-0" />
-                    <span className="text-gray-200">{point}</span>
+                    <span className="text-gray-700 font-medium">{point}</span>
                   </motion.div>
                 ))
               ) : null}
