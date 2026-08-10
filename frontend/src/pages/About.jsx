@@ -14,6 +14,7 @@ const defaultData = {
 
 const About = () => {
   const [pageData, setPageData] = useState(null);
+  const [globalData, setGlobalData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const { scrollY } = useScroll();
@@ -22,11 +23,17 @@ const About = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const res = await api.get('/settings');
+        const [res, globalRes] = await Promise.all([
+          api.get('/settings'),
+          api.get('/settings/global')
+        ]);
         if (res.data && res.data.about) {
           setPageData(res.data.about);
         } else {
           setPageData(defaultData);
+        }
+        if (globalRes.data) {
+          setGlobalData(globalRes.data);
         }
         setLoading(false);
       } catch (err) {
@@ -100,21 +107,16 @@ const About = () => {
             
             <div>
               <h2 className="text-4xl font-serif font-bold text-primary mb-6">Redefining Real Estate Excellence</h2>
-              <p className="text-lg text-gray-600 mb-6">
-                With over a decade of experience in the luxury real estate market, our team has built a reputation for uncompromising integrity, unparalleled market knowledge, and an unrelenting commitment to our clients.
-              </p>
-              <p className="text-lg text-gray-600 mb-8">
-                We believe that buying or selling a home is more than just a transaction—it's a life-changing experience. That's why we take a highly personalized approach, tailoring our strategies to meet your unique needs and goals.
-              </p>
+              <div className="text-lg text-gray-600 mb-8 whitespace-pre-wrap">
+                {globalData?.aboutUsContent || 'Dedicated to excellence, integrity, and achieving exceptional results for our clients.'}
+              </div>
               <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <div className="text-4xl font-bold text-accent mb-2">$500M+</div>
-                  <div className="text-gray-600 font-medium">Sales Volume</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-accent mb-2">15+</div>
-                  <div className="text-gray-600 font-medium">Years Experience</div>
-                </div>
+                {globalData?.stats?.slice(0, 2).map((stat, idx) => (
+                  <div key={idx}>
+                    <div className="text-4xl font-bold text-accent mb-2">{stat.value}</div>
+                    <div className="text-gray-600 font-medium">{stat.label}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

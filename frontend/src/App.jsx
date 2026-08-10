@@ -25,6 +25,7 @@ import AdminLeads from './pages/Admin/Leads';
 import HeroSettings from './pages/Admin/HeroSettings';
 import AdminSettings from './pages/Admin/Settings';
 import AdminTeam from './pages/Admin/Team';
+import BlogManager from './pages/Admin/BlogManager';
 import PageTransition from './components/PageTransition';
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="properties" element={<AdminProperties />} />
           <Route path="leads" element={<AdminLeads />} />
+          <Route path="blog" element={<BlogManager />} />
           <Route path="hero" element={<HeroSettings />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="team" element={<AdminTeam />} />

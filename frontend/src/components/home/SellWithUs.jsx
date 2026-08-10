@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { TrendingUp, Camera, Users } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
-const SellWithUs = () => {
+const SellWithUs = ({ content }) => {
   return (
     <section className="section-padding bg-background relative overflow-hidden">
       <div className="absolute right-0 top-0 w-1/3 h-full bg-surface hidden lg:block z-0" />
@@ -18,39 +18,22 @@ const SellWithUs = () => {
             }}
             className="lg:w-1/2"
           >
-            <motion.h2 variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-4xl font-serif font-bold text-primary mb-6">Thinking About Selling?</motion.h2>
-            <motion.p variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-gray-600 mb-8 text-lg leading-relaxed">
-              We maximize your property's value through strategic positioning, high-end presentation, and targeted marketing that reaches the right buyers.
+            <motion.h2 variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-4xl font-serif font-bold text-white mb-6">
+              {content?.title || 'Sell For Top Dollar'}
+            </motion.h2>
+            <motion.p variants={{ hidden: { opacity: 0, x: -30 }, visible: { opacity: 1, x: 0, transition: { duration: 0.6 } } }} className="text-gray-300 mb-8 text-lg leading-relaxed">
+              {content?.subtitle || 'A strategic, data-driven approach to maximizing your property value.'}
             </motion.p>
             
-            <div className="space-y-6 mb-10">
-              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex items-start">
-                <div className="bg-surface-dark p-3 rounded-full shadow-sm text-primary mr-4 flex-shrink-0">
-                  <TrendingUp className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-primary mb-1">Strategic Pricing</h4>
-                  <p className="text-gray-500 text-sm">Data-driven valuation to position your home competitively while maximizing your return on investment.</p>
-                </div>
-              </motion.div>
-              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex items-start">
-                <div className="bg-surface-dark p-3 rounded-full shadow-sm text-primary mr-4 flex-shrink-0">
-                  <Camera className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-primary mb-1">Premium Presentation</h4>
-                  <p className="text-gray-500 text-sm">Professional photography, staging consultations, and immersive virtual tours that make your listing stand out.</p>
-                </div>
-              </motion.div>
-              <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex items-start">
-                <div className="bg-surface-dark p-3 rounded-full shadow-sm text-primary mr-4 flex-shrink-0">
-                  <Users className="w-6 h-6" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-primary mb-1">Maximum Exposure</h4>
-                  <p className="text-gray-500 text-sm">Targeted digital marketing campaigns, exclusive broker networks, and syndication across top real estate platforms.</p>
-                </div>
-              </motion.div>
+            <div className="space-y-4 mb-10">
+              {content?.points?.length > 0 ? (
+                content.points.map((point, index) => (
+                  <motion.div key={index} variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex items-center">
+                    <CheckCircle className="w-5 h-5 text-accent mr-4 flex-shrink-0" />
+                    <span className="text-gray-200">{point}</span>
+                  </motion.div>
+                ))
+              ) : null}
             </div>
             
             <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5 } } }} className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">

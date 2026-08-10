@@ -19,12 +19,18 @@ const Home = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [heroImages, setHeroImages] = useState(DEFAULT_HERO_IMAGES);
 
-  const [stats, setStats] = useState([
-    { value: '500+', label: 'Homes Sold' },
-    { value: '15+', label: 'Years Experience' },
-    { value: '12', label: 'Local Markets' },
-    { value: '99%', label: 'Client Satisfaction' }
-  ]);
+  const [globalSettings, setGlobalSettings] = useState({
+    stats: [
+      { value: '500+', label: 'Homes Sold' },
+      { value: '15+', label: 'Years Experience' },
+      { value: '12', label: 'Local Markets' },
+      { value: '99%', label: 'Client Satisfaction' }
+    ],
+    homeHero: {
+      title: 'Your Next Move Starts Here.',
+      subtitle: 'Helping buyers and sellers navigate real estate with confidence, clarity, and a strategy built around their goals.'
+    }
+  });
 
   // Fetch dynamic images from API
   useEffect(() => {
@@ -41,8 +47,8 @@ const Home = () => {
     const fetchGlobalSettings = async () => {
       try {
         const res = await api.get('/settings/global');
-        if (res.data && res.data.stats && res.data.stats.length > 0) {
-          setStats(res.data.stats);
+        if (res.data) {
+          setGlobalSettings(res.data);
         }
       } catch (err) {
         console.error("Failed to fetch global settings", err);
@@ -92,10 +98,10 @@ const Home = () => {
             className="max-w-4xl"
           >
             <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 text-accent drop-shadow-2xl leading-tight">
-              Your Next Move <br />Starts Here.
+              {globalSettings.homeHero?.title || 'Your Next Move Starts Here.'}
             </h1>
             <p className="text-lg md:text-2xl mb-10 text-white drop-shadow-xl max-w-3xl mx-auto font-medium">
-              Helping buyers and sellers navigate real estate with confidence, clarity, and a strategy built around their goals.
+              {globalSettings.homeHero?.subtitle || 'Helping buyers and sellers navigate real estate with confidence, clarity, and a strategy built around their goals.'}
             </p>
             <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
               <Link to="/listings" className="btn-accent px-8 py-4 text-lg">Explore Properties</Link>
@@ -109,7 +115,7 @@ const Home = () => {
       <section className="bg-surface py-12 border-b border-gray-200">
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {stats.map((stat, idx) => (
+            {globalSettings.stats?.map((stat, idx) => (
               <motion.div 
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -126,9 +132,9 @@ const Home = () => {
       </section>
 
       <FeaturedListings />
-      <BuyWithUs />
-      <SellWithUs />
-      <WhyUs />
+      <BuyWithUs content={globalSettings.buySection} />
+      <SellWithUs content={globalSettings.sellSection} />
+      <WhyUs content={globalSettings.whyUsSection} />
     </div>
   );
 };

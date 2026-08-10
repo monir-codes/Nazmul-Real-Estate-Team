@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Outlet, Link, useNavigate, NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare, Image as ImageIcon, Building2, UserPlus } from 'lucide-react';
+import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare, Image as ImageIcon, Building2, UserPlus, FileText } from 'lucide-react';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ const AdminLayout = () => {
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Properties', path: '/admin/properties', icon: Building2 },
     { name: 'Leads (CRM)', path: '/admin/leads', icon: Users },
+    { name: 'Blog Manager', path: '/admin/blog', icon: FileText },
     { name: 'Hero Settings', path: '/admin/hero', icon: ImageIcon },
     { name: 'Page Builder', path: '/admin/settings', icon: Settings },
     { name: 'Manage Team', path: '/admin/team', icon: UserPlus },

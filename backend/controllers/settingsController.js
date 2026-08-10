@@ -113,7 +113,41 @@ const defaultGlobalSettings = {
     { value: '15+', label: 'Years Experience' },
     { value: '12', label: 'Local Markets' },
     { value: '99%', label: 'Client Satisfaction' }
-  ]
+  ],
+  homeHero: {
+    title: 'Your Next Move Starts Here.',
+    subtitle: 'Helping buyers and sellers navigate real estate with confidence, clarity, and a strategy built around their goals.'
+  },
+  buySection: {
+    title: 'Buy With Confidence',
+    subtitle: 'Our proven framework for finding and securing your dream home.',
+    steps: [
+      { title: 'Consultation & Strategy', desc: 'We start by understanding your exact needs, timeline, and financial goals.' },
+      { title: 'Property Search', desc: 'Access off-market listings and get priority viewings for the best homes.' },
+      { title: 'Negotiation & Closing', desc: 'Expert negotiation to secure the best price and terms on your behalf.' }
+    ]
+  },
+  sellSection: {
+    title: 'Sell For Top Dollar',
+    subtitle: 'A strategic, data-driven approach to maximizing your property value.',
+    points: [
+      'Comprehensive Market Analysis',
+      'Professional Photography & Staging Guidance',
+      'Aggressive Digital Marketing Campaigns',
+      'Targeted Buyer Outreach',
+      'Expert Negotiation Strategies'
+    ]
+  },
+  whyUsSection: {
+    title: 'Why Choose Nazmul Team?',
+    subtitle: 'Experience the difference of working with true local experts.',
+    reasons: [
+      { title: 'Local Expertise', desc: 'Deep knowledge of neighborhoods, schools, and market trends.' },
+      { title: 'Proven Results', desc: 'A track record of selling homes faster and for more money.' },
+      { title: 'Client-First Approach', desc: 'Your goals are our priority. We communicate transparently at every step.' }
+    ]
+  },
+  aboutUsContent: 'Dedicated to excellence, integrity, and achieving exceptional results for our clients.'
 };
 
 // @desc    Get global settings (links, contact info)
@@ -143,6 +177,14 @@ exports.updateGlobalSettings = async (req, res) => {
       settings.socialLinks = req.body.socialLinks || settings.socialLinks;
       settings.contactInfo = req.body.contactInfo || settings.contactInfo;
       if (req.body.stats) settings.stats = req.body.stats;
+      
+      // CMS Content Fields
+      if (req.body.homeHero) settings.homeHero = req.body.homeHero;
+      if (req.body.buySection) settings.buySection = req.body.buySection;
+      if (req.body.sellSection) settings.sellSection = req.body.sellSection;
+      if (req.body.whyUsSection) settings.whyUsSection = req.body.whyUsSection;
+      if (req.body.aboutUsContent) settings.aboutUsContent = req.body.aboutUsContent;
+      
       await settings.save();
     } else {
       settings = await GlobalSettings.create(req.body);

@@ -17,13 +17,19 @@ const AdminSettings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [message, setMessage] = useState('');
 
   const [globalSettings, setGlobalSettings] = useState({
     headerLinks: [],
     footerLinks: [],
     socialLinks: [],
     contactInfo: { phone: '', email: '', address: '' },
-    stats: []
+    stats: [],
+    homeHero: { title: '', subtitle: '' },
+    buySection: { title: '', subtitle: '', steps: [] },
+    sellSection: { title: '', subtitle: '', points: [] },
+    whyUsSection: { title: '', subtitle: '', reasons: [] },
+    aboutUsContent: ''
   });
 
   const fetchSettings = async () => {
@@ -83,6 +89,33 @@ const AdminSettings = () => {
     const updatedLinks = [...globalSettings[type]];
     updatedLinks.splice(index, 1);
     setGlobalSettings({ ...globalSettings, [type]: updatedLinks });
+  };
+
+  const handleCMSSectionChange = (section, field, value) => {
+    setGlobalSettings({
+      ...globalSettings,
+      [section]: {
+        ...globalSettings[section],
+        [field]: value
+      }
+    });
+  };
+
+  const handleCMSArrayChange = (section, arrayField, index, field, value) => {
+    const newArray = [...globalSettings[section][arrayField]];
+    if (field === null) {
+      // For simple string arrays (like sellSection.points)
+      newArray[index] = value;
+    } else {
+      newArray[index][field] = value;
+    }
+    setGlobalSettings({
+      ...globalSettings,
+      [section]: {
+        ...globalSettings[section],
+        [arrayField]: newArray
+      }
+    });
   };
 
   const handleImageUpload = async (e) => {
@@ -150,13 +183,13 @@ const AdminSettings = () => {
       
       {/* Tabs */}
       <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-6 max-w-fit flex-wrap">
-        {['buy', 'sell', 'about', 'areas', 'global'].map(tab => (
+        {['buy', 'sell', 'about', 'areas', 'global', 'content'].map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 rounded-md text-sm font-medium capitalize transition-all ${activeTab === tab ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
           >
-            {tab === 'areas' ? 'Areas We Serve' : tab === 'global' ? 'Global Navigation' : `${tab} Page`}
+            {tab === 'areas' ? 'Areas We Serve' : tab === 'global' ? 'Global Navigation' : tab === 'content' ? 'Homepage CMS' : `${tab} Page`}
           </button>
         ))}
       </div>
@@ -259,12 +292,100 @@ const AdminSettings = () => {
               )}
 
               <button 
-                onClick={handleSave}
+                onClick={handleGlobalSave}
                 disabled={saving}
                 className="btn-primary w-full flex items-center justify-center py-3"
               >
                 {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
                 Save Global Navigation & Settings
+              </button>
+            </div>
+          ) : activeTab === 'content' ? (
+            <div className="space-y-10">
+              {/* Home Hero Content */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Homepage Hero Banner</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Headline</label>
+                    <input type="text" value={globalSettings.homeHero?.title || ''} onChange={(e) => handleCMSSectionChange('homeHero', 'title', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Subtitle Text</label>
+                    <textarea rows="2" value={globalSettings.homeHero?.subtitle || ''} onChange={(e) => handleCMSSectionChange('homeHero', 'subtitle', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Buy With Us Section */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">"Buy With Us" Framework</h3>
+                <div className="space-y-4 mb-4">
+                  <input type="text" placeholder="Section Title" value={globalSettings.buySection?.title || ''} onChange={(e) => handleCMSSectionChange('buySection', 'title', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                  <input type="text" placeholder="Section Subtitle" value={globalSettings.buySection?.subtitle || ''} onChange={(e) => handleCMSSectionChange('buySection', 'subtitle', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                </div>
+                <div className="space-y-4 border-l-4 border-accent pl-4">
+                  {globalSettings.buySection?.steps?.map((step, idx) => (
+                    <div key={idx} className="space-y-2">
+                      <div className="font-bold text-gray-600 text-sm">Step {idx + 1}</div>
+                      <input type="text" value={step.title} onChange={(e) => handleCMSArrayChange('buySection', 'steps', idx, 'title', e.target.value)} placeholder="Step Title" className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                      <input type="text" value={step.desc} onChange={(e) => handleCMSArrayChange('buySection', 'steps', idx, 'desc', e.target.value)} placeholder="Step Description" className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent text-sm" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sell With Us Section */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">"Sell For Top Dollar" Section</h3>
+                <div className="space-y-4 mb-4">
+                  <input type="text" placeholder="Section Title" value={globalSettings.sellSection?.title || ''} onChange={(e) => handleCMSSectionChange('sellSection', 'title', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                  <input type="text" placeholder="Section Subtitle" value={globalSettings.sellSection?.subtitle || ''} onChange={(e) => handleCMSSectionChange('sellSection', 'subtitle', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                </div>
+                <div className="space-y-2 border-l-4 border-accent pl-4">
+                  {globalSettings.sellSection?.points?.map((point, idx) => (
+                    <input key={idx} type="text" value={point} onChange={(e) => handleCMSArrayChange('sellSection', 'points', idx, null, e.target.value)} placeholder={`Bullet Point ${idx + 1}`} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent text-sm" />
+                  ))}
+                </div>
+              </div>
+
+              {/* Why Us Section */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">"Why Choose Us" Section</h3>
+                <div className="space-y-4 mb-4">
+                  <input type="text" placeholder="Section Title" value={globalSettings.whyUsSection?.title || ''} onChange={(e) => handleCMSSectionChange('whyUsSection', 'title', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                  <input type="text" placeholder="Section Subtitle" value={globalSettings.whyUsSection?.subtitle || ''} onChange={(e) => handleCMSSectionChange('whyUsSection', 'subtitle', e.target.value)} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                </div>
+                <div className="space-y-4 border-l-4 border-accent pl-4">
+                  {globalSettings.whyUsSection?.reasons?.map((reason, idx) => (
+                    <div key={idx} className="space-y-2">
+                      <div className="font-bold text-gray-600 text-sm">Reason {idx + 1}</div>
+                      <input type="text" value={reason.title} onChange={(e) => handleCMSArrayChange('whyUsSection', 'reasons', idx, 'title', e.target.value)} placeholder="Reason Title" className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+                      <input type="text" value={reason.desc} onChange={(e) => handleCMSArrayChange('whyUsSection', 'reasons', idx, 'desc', e.target.value)} placeholder="Reason Description" className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent text-sm" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* About Us Content */}
+              <div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">About Page Core Content</h3>
+                <textarea rows="4" value={globalSettings.aboutUsContent || ''} onChange={(e) => setGlobalSettings({...globalSettings, aboutUsContent: e.target.value})} className="w-full border border-gray-300 rounded-md px-4 py-2 outline-none focus:border-accent" />
+              </div>
+
+              {message && (
+                <div className={`p-3 rounded-md text-sm ${message.includes('success') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+                  {message}
+                </div>
+              )}
+
+              <button 
+                onClick={handleGlobalSave}
+                disabled={saving}
+                className="btn-primary w-full flex items-center justify-center py-3"
+              >
+                {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
+                Save CMS Content
               </button>
             </div>
           ) : (
