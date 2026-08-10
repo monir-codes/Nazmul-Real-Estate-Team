@@ -8,12 +8,23 @@ import api from '../utils/api';
 import SEO from '../components/SEO';
 
 const Profile = () => {
-  const { user, refreshProfile } = useAuth();
+  const { user, loading: authLoading, refreshProfile } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center">
+          <Loader2 className="w-10 h-10 animate-spin text-accent mb-4" />
+          <p className="text-gray-500 font-serif">Verifying identity...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/login" replace />;
