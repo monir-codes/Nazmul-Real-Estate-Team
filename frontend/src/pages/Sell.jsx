@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Camera, TrendingUp, Shield, Users, ArrowRight } from 'lucide-react';
+import { Camera, TrendingUp, Shield, Users, ArrowRight, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';

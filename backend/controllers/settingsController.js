@@ -1,4 +1,5 @@
 const SiteSettings = require('../models/SiteSettings');
+const GlobalSettings = require('../models/GlobalSettings');
 
 // Default initial data for pages if not in DB yet
 const defaultSettings = {
@@ -80,5 +81,67 @@ exports.updateSettings = async (req, res) => {
     res.json(setting);
   } catch (error) {
     res.status(500).json({ error: 'Server error updating settings' });
+  }
+};
+
+const defaultGlobalSettings = {
+  headerLinks: [
+    { label: 'Home', url: '/' },
+    { label: 'Buy', url: '/buy' },
+    { label: 'Sell', url: '/sell' },
+    { label: 'Listings', url: '/listings' },
+    { label: 'Our Team', url: '/team' },
+    { label: 'Areas We Serve', url: '/areas' }
+  ],
+  footerLinks: [
+    { label: 'Privacy Policy', url: '#' },
+    { label: 'Terms of Service', url: '#' },
+    { label: 'Sitemap', url: '#' }
+  ],
+  socialLinks: [
+    { platform: 'Facebook', url: '#' },
+    { platform: 'Instagram', url: '#' },
+    { platform: 'LinkedIn', url: '#' }
+  ],
+  contactInfo: {
+    phone: '1-800-555-0199',
+    email: 'contact@nazmulrealestate.com',
+    address: '123 Luxury Ave, Beverly Hills, CA 90210'
+  }
+};
+
+// @desc    Get global settings (links, contact info)
+// @route   GET /api/settings/global
+// @access  Public
+exports.getGlobalSettings = async (req, res) => {
+  try {
+    let settings = await GlobalSettings.findOne();
+    if (!settings) {
+      settings = await GlobalSettings.create(defaultGlobalSettings);
+    }
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error fetching global settings' });
+  }
+};
+
+// @desc    Update global settings
+// @route   PUT /api/settings/global
+// @access  Private/Admin
+exports.updateGlobalSettings = async (req, res) => {
+  try {
+    let settings = await GlobalSettings.findOne();
+    if (settings) {
+      settings.headerLinks = req.body.headerLinks || settings.headerLinks;
+      settings.footerLinks = req.body.footerLinks || settings.footerLinks;
+      settings.socialLinks = req.body.socialLinks || settings.socialLinks;
+      settings.contactInfo = req.body.contactInfo || settings.contactInfo;
+      await settings.save();
+    } else {
+      settings = await GlobalSettings.create(req.body);
+    }
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ error: 'Server error updating global settings' });
   }
 };

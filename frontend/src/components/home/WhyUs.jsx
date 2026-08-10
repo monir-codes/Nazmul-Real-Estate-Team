@@ -46,7 +46,7 @@ const WhyUs = () => {
               className="bg-white/5 border border-white/10 p-8 rounded-lg hover:bg-white/10 transition-colors"
             >
               <div className="mb-6">{reason.icon}</div>
-              <h3 className="text-xl font-bold mb-3">{reason.title}</h3>
+              <h3 className="text-xl font-bold mb-3 text-white">{reason.title}</h3>
               <p className="text-gray-400 text-sm leading-relaxed">{reason.description}</p>
             </motion.div>
           ))}

@@ -1,12 +1,36 @@
 import { Link } from 'react-router-dom';
 import { Menu, Search, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import api from '../utils/api';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [headerLinks, setHeaderLinks] = useState([]);
 
   useEffect(() => {
+    const fetchGlobalSettings = async () => {
+      try {
+        const res = await api.get('/settings/global');
+        if (res.data && res.data.headerLinks) {
+          setHeaderLinks(res.data.headerLinks);
+        }
+      } catch (err) {
+        console.error("Failed to fetch header links", err);
+        // Fallback
+        setHeaderLinks([
+          { label: 'Home', url: '/' },
+          { label: 'Buy', url: '/buy' },
+          { label: 'Sell', url: '/sell' },
+          { label: 'Listings', url: '/listings' },
+          { label: 'Our Team', url: '/team' },
+          { label: 'Areas We Serve', url: '/areas' }
+        ]);
+      }
+    };
+    fetchGlobalSettings();
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
@@ -24,12 +48,11 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center space-x-8">
-          <Link to="/" className="text-primary hover:text-accent transition-colors font-medium">Home</Link>
-          <Link to="/buy" className="text-primary hover:text-accent transition-colors font-medium">Buy</Link>
-          <Link to="/sell" className="text-primary hover:text-accent transition-colors font-medium">Sell</Link>
-          <Link to="/listings" className="text-primary hover:text-accent transition-colors font-medium">Listings</Link>
-          <Link to="/team" className="text-primary hover:text-accent transition-colors font-medium">Our Team</Link>
-          <Link to="/areas" className="text-primary hover:text-accent transition-colors font-medium">Areas We Serve</Link>
+          {headerLinks.map((link, idx) => (
+            <Link key={idx} to={link.url} className="text-primary hover:text-accent transition-colors font-medium">
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
         {/* Right Actions */}
@@ -52,22 +75,34 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Nav */}
-      {isOpen && (
-        <>
-          <div 
-            className="lg:hidden fixed inset-0 bg-black/20 z-40" 
-            onClick={() => setIsOpen(false)}
-          />
-          <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col space-y-4 z-50 border-t border-gray-100">
-            <Link to="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">Home</Link>
-            <Link to="/buy" onClick={() => setIsOpen(false)} className="text-lg font-medium">Buy</Link>
-            <Link to="/sell" onClick={() => setIsOpen(false)} className="text-lg font-medium">Sell</Link>
-            <Link to="/listings" onClick={() => setIsOpen(false)} className="text-lg font-medium">Listings</Link>
-            <Link to="/team" onClick={() => setIsOpen(false)} className="text-lg font-medium">Our Team</Link>
-            <Link to="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full text-center mt-4">Let's Talk</Link>
-          </div>
-        </>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden fixed inset-0 bg-black/20 z-40" 
+              onClick={() => setIsOpen(false)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col space-y-4 z-50 border-t border-gray-100"
+            >
+              {headerLinks.map((link, idx) => (
+                <Link key={idx} to={link.url} onClick={() => setIsOpen(false)} className="text-lg font-medium">
+                  {link.label}
+                </Link>
+              ))}
+              <Link to="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full text-center mt-4">Let's Talk</Link>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

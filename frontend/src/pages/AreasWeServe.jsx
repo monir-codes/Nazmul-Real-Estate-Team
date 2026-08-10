@@ -88,7 +88,14 @@ const AreasWeServe = () => {
         <div className="container-custom">
           {/* Areas Grid - Placeholder for real data */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+            {[
+              "https://images.unsplash.com/photo-1515263487990-61b07816b324?w=800&q=80",
+              "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&q=80",
+              "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80",
+              "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?w=800&q=80",
+              "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80",
+              "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&q=80"
+            ].map((imgUrl, i) => (
               <motion.div 
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -98,8 +105,8 @@ const AreasWeServe = () => {
                 className="group relative h-96 rounded-2xl overflow-hidden cursor-pointer"
               >
                 <img 
-                  src={`https://images.unsplash.com/photo-${1580659328221 + i}-a53ec8651817?w=800&q=80`} 
-                  alt="Neighborhood" 
+                  src={imgUrl} 
+                  alt={`Neighborhood ${i + 1}`} 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent transition-opacity duration-300" />

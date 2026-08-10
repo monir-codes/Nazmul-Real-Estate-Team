@@ -47,7 +47,7 @@ const Buy = () => {
         description={pageData.subtitle}
       />
       {/* Cinematic Hero */}
-      <div className="bg-primary text-white h-[60vh] relative overflow-hidden flex flex-col justify-center">
+      <div className="bg-primary text-white min-h-[60vh] py-20 relative overflow-hidden flex flex-col justify-center">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-70 transform scale-105"
           style={{ backgroundImage: `url(${pageData.backgroundImage})`, backgroundAttachment: 'fixed' }}
@@ -67,7 +67,7 @@ const Buy = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-              className="text-5xl md:text-7xl font-serif font-bold mb-6 text-white drop-shadow-2xl leading-tight"
+              className="text-4xl sm:text-5xl md:text-7xl font-serif font-bold mb-6 text-white drop-shadow-2xl leading-tight"
             >
               {pageData.title}
             </motion.h1>
