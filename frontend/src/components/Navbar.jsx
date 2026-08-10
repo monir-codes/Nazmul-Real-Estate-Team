@@ -75,9 +75,6 @@ const Navbar = () => {
 
         {/* Right Actions */}
         <div className="hidden lg:flex items-center space-x-6">
-          <button className="text-primary hover:text-accent transition-colors">
-            <Search className="w-5 h-5" />
-          </button>
           <Link to="/contact" className="btn-primary">
             Let's Talk
           </Link>

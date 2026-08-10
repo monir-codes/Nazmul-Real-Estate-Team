@@ -90,9 +90,9 @@ const Contact = () => {
                   <div className="w-10 h-10 bg-accent/10 rounded-lg flex items-center justify-center flex-shrink-0">
                     <Mail className="w-5 h-5 text-accent" />
                   </div>
-                  <div className="ml-4">
+                  <div className="ml-4 flex-1 min-w-0">
                     <p className="font-medium text-gray-800">Email</p>
-                    <a href="mailto:contact@nazmulrealestate.com" className="text-gray-500 hover:text-accent transition-colors">contact@nazmulrealestate.com</a>
+                    <a href="mailto:contact@nazmulrealestate.com" className="text-gray-500 hover:text-accent transition-colors break-all">contact@nazmulrealestate.com</a>
                   </div>
                 </div>
                 <div className="flex items-start">
