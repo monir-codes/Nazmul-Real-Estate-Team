@@ -60,8 +60,34 @@ export const AuthProvider = ({ children }) => {
     setUser(res.data);
   };
 
+import { auth, googleProvider } from '../config/firebase';
+import { signInWithPopup } from 'firebase/auth';
+
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const { user: firebaseUser } = result;
+      
+      // Send Firebase user details to our backend to get JWT token
+      const res = await api.post('/auth/google', {
+        name: firebaseUser.displayName,
+        email: firebaseUser.email,
+        uid: firebaseUser.uid
+      });
+      
+      const { token, ...userData } = res.data;
+      localStorage.setItem('clientToken', token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, refreshProfile }}>
+    <AuthContext.Provider value={{ user, loading, login, register, loginWithGoogle, logout, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Trash2, Plus, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
 import AdminLoader from '../../components/AdminLoader';
@@ -37,9 +38,10 @@ const HeroSettings = () => {
       setImages([res.data, ...images]);
       setNewUrl('');
       setNewTitle('');
+      toast.success('Image added successfully');
     } catch (error) {
       console.error('Failed to add image', error);
-      alert('Failed to add image. Ensure URL is valid.');
+      toast.error('Failed to add image. Ensure URL is valid.');
     }
   };
 
@@ -62,9 +64,10 @@ const HeroSettings = () => {
       const imageUrl = await uploadToImgBB(file);
       const res = await api.post('/hero', { url: imageUrl, title: file.name });
       setImages([res.data, ...images]);
+      toast.success('Image uploaded successfully');
     } catch (err) {
       console.error(err);
-      alert("Failed to upload image. Check VITE_IMGBB_API_KEY.");
+      toast.error('Failed to upload image. Check VITE_IMGBB_API_KEY.');
     } finally {
       setUploadingImage(false);
     }

@@ -20,50 +20,7 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const defaultProperties = [
-  {
-    _id: 'fallback-1',
-    address: '2847 Sunset Boulevard',
-    city: 'Beverly Hills',
-    state: 'CA',
-    price: 2450000,
-    beds: 5,
-    baths: 4,
-    sqft: 4200,
-    status: 'For Sale',
-    propertyType: 'Single Family',
-    images: ['https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80'],
-    coordinates: { lat: 34.0736, lng: -118.4004 }
-  },
-  {
-    _id: 'fallback-2',
-    address: '1523 Ocean Drive',
-    city: 'Malibu',
-    state: 'CA',
-    price: 3750000,
-    beds: 4,
-    baths: 3,
-    sqft: 3800,
-    status: 'For Sale',
-    propertyType: 'Waterfront',
-    images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80'],
-    coordinates: { lat: 34.0259, lng: -118.7798 }
-  },
-  {
-    _id: 'fallback-3',
-    address: '890 Mulholland Drive',
-    city: 'Los Angeles',
-    state: 'CA',
-    price: 1950000,
-    beds: 3,
-    baths: 2,
-    sqft: 2800,
-    status: 'Pending',
-    propertyType: 'Modern Villa',
-    images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80'],
-    coordinates: { lat: 34.1166, lng: -118.3524 }
-  }
-];
+// Removed default properties to enforce fully dynamic data fetching as requested.
 
 // Helper component to recenter map when properties change
 function ChangeView({ center, zoom }) {
@@ -88,12 +45,12 @@ const Listings = () => {
         if (res.data && res.data.length > 0) {
           setProperties(res.data);
         } else {
-          setProperties(defaultProperties);
+          setProperties([]);
         }
         setLoading(false);
       } catch (err) {
-        console.error("Failed to fetch properties, using fallback data", err);
-        setProperties(defaultProperties);
+        console.error("Failed to fetch properties", err);
+        setProperties([]);
         setLoading(false);
       }
     };

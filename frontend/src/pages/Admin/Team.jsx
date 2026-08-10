@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, Image as ImageIcon, Loader2, X, Search } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
 import AdminLoader from '../../components/AdminLoader';
@@ -48,7 +49,7 @@ const AdminTeam = () => {
       setFormData({ ...formData, image: imageUrl });
     } catch (err) {
       console.error(err);
-      alert("Failed to upload image. Ensure VITE_IMGBB_API_KEY is set.");
+      toast.error("Failed to upload image. Ensure VITE_IMGBB_API_KEY is set.");
     } finally {
       setUploadingImage(false);
     }
@@ -57,13 +58,20 @@ const AdminTeam = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/team', formData);
-      setTeam([res.data, ...team]);
-      setShowModal(false);
-      setFormData({ name: '', role: '', bio: '', email: '', phone: '', image: '' });
+      if (editingId) {
+        const res = await api.put(`/team/${editingId}`, formData);
+        setTeam(team.map(m => m._id === editingId ? res.data : m));
+        toast.success("Team member updated");
+      } else {
+        const res = await api.post('/team', formData);
+        setTeam([res.data, ...team]);
+        toast.success("Team member added");
+      }
+      setIsModalOpen(false);
+      resetForm();
     } catch (err) {
       console.error(err);
-      alert("Failed to create team member");
+      toast.error(editingId ? "Failed to update team member" : "Failed to create team member");
     }
   };
 

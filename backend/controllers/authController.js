@@ -103,4 +103,27 @@ const toggleFavorite = async (req, res) => {
   }
 };
 
-module.exports = { loginUser, registerUser, getProfile, toggleFavorite, seedAdmin };
+const googleAuth = async (req, res) => {
+  const { name, email, uid } = req.body;
+  try {
+    let user = await User.findOne({ email });
+    
+    if (!user) {
+      // Create user using a random secure password since they use Google to login
+      const randomPassword = Math.random().toString(36).slice(-10) + Math.random().toString(36).slice(-10);
+      user = await User.create({ name, email, password: randomPassword, role: 'client' });
+    }
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+module.exports = { loginUser, registerUser, getProfile, toggleFavorite, seedAdmin, googleAuth };

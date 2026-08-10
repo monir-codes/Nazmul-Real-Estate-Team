@@ -37,7 +37,8 @@ const seedDB = async () => {
         propertyType: 'Single Family',
         status: 'For Sale',
         description: 'Breathtaking modern estate with panoramic city views, infinity edge pool, and smart home automation.',
-        images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80']
+        images: ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80'],
+        coordinates: { lat: 34.0736, lng: -118.4004 }
       },
       {
         title: 'Malibu Oceanfront Retreat',
@@ -52,7 +53,8 @@ const seedDB = async () => {
         propertyType: 'Single Family',
         status: 'For Sale',
         description: 'Direct beach access, floor-to-ceiling glass walls, and a private wraparound deck overlooking the Pacific.',
-        images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80']
+        images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80'],
+        coordinates: { lat: 34.0259, lng: -118.7798 }
       },
       {
         title: 'Downtown Luxury Penthouse',
@@ -67,7 +69,88 @@ const seedDB = async () => {
         propertyType: 'Condo',
         status: 'For Sale',
         description: 'Ultra-luxury penthouse featuring 20ft ceilings, private elevator access, and unobstructed skyline views.',
-        images: ['https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&q=80']
+        images: ['https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&q=80'],
+        coordinates: { lat: 34.0488, lng: -118.2616 }
+      },
+      {
+        title: 'Hollywood Hills Architectural',
+        address: '890 Mulholland Drive',
+        city: 'Los Angeles',
+        state: 'CA',
+        zip: '90046',
+        price: 5950000,
+        beds: 4,
+        baths: 5,
+        sqft: 4800,
+        propertyType: 'Modern Villa',
+        status: 'Pending',
+        description: 'Award-winning architectural masterpiece nestled in the hills with a floating staircase and zero-edge pool.',
+        images: ['https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=1200&q=80'],
+        coordinates: { lat: 34.1166, lng: -118.3524 }
+      },
+      {
+        title: 'Santa Monica Beach House',
+        address: '15 Ocean Ave',
+        city: 'Santa Monica',
+        state: 'CA',
+        zip: '90401',
+        price: 6800000,
+        beds: 3,
+        baths: 3.5,
+        sqft: 3400,
+        propertyType: 'Single Family',
+        status: 'For Sale',
+        description: 'Steps from the sand, this coastal chic home features a rooftop deck and an open-concept living area.',
+        images: ['https://images.unsplash.com/photo-1510627489947-f67319c40333?w=1200&q=80'],
+        coordinates: { lat: 34.0116, lng: -118.4923 }
+      },
+      {
+        title: 'Bel Air Mega Mansion',
+        address: '900 N Stradella Rd',
+        city: 'Los Angeles',
+        state: 'CA',
+        zip: '90077',
+        price: 25000000,
+        beds: 8,
+        baths: 11,
+        sqft: 15000,
+        propertyType: 'Estate',
+        status: 'For Sale',
+        description: 'The epitome of luxury living in Bel Air, featuring a 20-car gallery, private cinema, and wellness spa.',
+        images: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80'],
+        coordinates: { lat: 34.0924, lng: -118.4485 }
+      },
+      {
+        title: 'Brentwood Traditional Family Home',
+        address: '12344 San Vicente Blvd',
+        city: 'Los Angeles',
+        state: 'CA',
+        zip: '90049',
+        price: 3500000,
+        beds: 4,
+        baths: 4,
+        sqft: 4000,
+        propertyType: 'Single Family',
+        status: 'Sold',
+        description: 'Charming traditional home located in the heart of Brentwood, complete with a chef’s kitchen and sprawling backyard.',
+        images: ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&q=80'],
+        coordinates: { lat: 34.0535, lng: -118.4728 }
+      },
+      {
+        title: 'Venice Canal Cottage',
+        address: '430 Carroll Canal',
+        city: 'Venice',
+        state: 'CA',
+        zip: '90291',
+        price: 2150000,
+        beds: 2,
+        baths: 2,
+        sqft: 1800,
+        propertyType: 'Single Family',
+        status: 'For Sale',
+        description: 'Historic and meticulously restored cottage right on the iconic Venice Canals with a private boat dock.',
+        images: ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80'],
+        coordinates: { lat: 33.9834, lng: -118.4674 }
       }
     ];
     await Property.insertMany(properties);

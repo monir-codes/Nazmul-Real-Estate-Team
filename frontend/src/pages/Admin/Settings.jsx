@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Save, Image as ImageIcon, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
 import AdminLoader from '../../components/AdminLoader';
@@ -16,7 +17,6 @@ const AdminSettings = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [message, setMessage] = useState('');
 
   const [globalSettings, setGlobalSettings] = useState({
     headerLinks: [],
@@ -100,7 +100,7 @@ const AdminSettings = () => {
         }
       });
     } catch (err) {
-      alert('Failed to upload image');
+      toast.error('Failed to upload image');
     } finally {
       setUploadingImage(false);
     }

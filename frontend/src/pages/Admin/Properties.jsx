@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
 import AdminLoader from '../../components/AdminLoader';
@@ -34,8 +35,10 @@ const AdminProperties = () => {
     try {
       await api.delete(`/properties/${id}`);
       setProperties(properties.filter(p => p._id !== id));
+      toast.success("Property deleted successfully");
     } catch (err) {
       console.error("Failed to delete", err);
+      toast.error("Failed to delete property");
     }
   };
 
@@ -53,7 +56,7 @@ const AdminProperties = () => {
       setFormData(prev => ({ ...prev, images: [...prev.images, ...uploadedUrls] }));
     } catch (err) {
       console.error(err);
-      alert("Failed to upload image.");
+      toast.error("Failed to upload image.");
     } finally {
       setUploadingImage(false);
     }
