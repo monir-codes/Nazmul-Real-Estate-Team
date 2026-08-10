@@ -81,6 +81,7 @@ const PropertyDetails = () => {
             <img 
               src={images[activeImage]} 
               alt={property.title} 
+              onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80'; }}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute top-4 right-4 bg-primary text-white px-4 py-2 rounded-full font-bold shadow-lg">
@@ -100,7 +101,12 @@ const PropertyDetails = () => {
                   onClick={() => setActiveImage(idx)}
                   className={`relative flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-colors ${activeImage === idx ? 'border-accent' : 'border-transparent opacity-70 hover:opacity-100'}`}
                 >
-                  <img src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
+                  <img 
+                    src={img} 
+                    alt={`Thumbnail ${idx}`} 
+                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=200&q=80'; }}
+                    className="w-full h-full object-cover" 
+                  />
                 </button>
               ))}
             </div>

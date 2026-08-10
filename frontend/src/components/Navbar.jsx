@@ -53,14 +53,20 @@ const Navbar = () => {
 
       {/* Mobile Nav */}
       {isOpen && (
-        <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col space-y-4">
-          <Link to="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">Home</Link>
-          <Link to="/buy" onClick={() => setIsOpen(false)} className="text-lg font-medium">Buy</Link>
-          <Link to="/sell" onClick={() => setIsOpen(false)} className="text-lg font-medium">Sell</Link>
-          <Link to="/listings" onClick={() => setIsOpen(false)} className="text-lg font-medium">Listings</Link>
-          <Link to="/team" onClick={() => setIsOpen(false)} className="text-lg font-medium">Our Team</Link>
-          <Link to="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full text-center mt-4">Let's Talk</Link>
-        </div>
+        <>
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/20 z-40" 
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="lg:hidden absolute top-full left-0 w-full bg-white shadow-lg py-4 px-6 flex flex-col space-y-4 z-50 border-t border-gray-100">
+            <Link to="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">Home</Link>
+            <Link to="/buy" onClick={() => setIsOpen(false)} className="text-lg font-medium">Buy</Link>
+            <Link to="/sell" onClick={() => setIsOpen(false)} className="text-lg font-medium">Sell</Link>
+            <Link to="/listings" onClick={() => setIsOpen(false)} className="text-lg font-medium">Listings</Link>
+            <Link to="/team" onClick={() => setIsOpen(false)} className="text-lg font-medium">Our Team</Link>
+            <Link to="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full text-center mt-4">Let's Talk</Link>
+          </div>
+        </>
       )}
     </header>
   );

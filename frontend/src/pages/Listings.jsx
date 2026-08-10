@@ -134,6 +134,7 @@ const Listings = () => {
                   <img 
                     src={listing.images && listing.images.length > 0 ? listing.images[0] : 'https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80'} 
                     alt={listing.address} 
+                    onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.unsplash.com/photo-1613490908578-8fc8d21b339d?w=800&q=80'; }}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-sm font-medium rounded text-primary shadow-sm">

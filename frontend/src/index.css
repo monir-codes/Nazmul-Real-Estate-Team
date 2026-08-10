@@ -16,12 +16,13 @@
 }
 
 @layer base {
-  body {
+  html, body {
     background-color: var(--color-background);
     color: var(--color-primary);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -48,6 +49,6 @@
   }
   
   .container-custom {
-    @apply container mx-auto px-4 md:px-6 max-w-7xl;
+    @apply container mx-auto px-4 md:px-6 max-w-7xl w-full;
   }
 }
