@@ -37,4 +37,16 @@ exports.deleteTeamMember = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Server error deleting team member' });
   }
+// @desc    Update a team member
+// @route   PUT /api/team/:id
+// @access  Private/Admin
+exports.updateTeamMember = async (req, res) => {
+  try {
+    const member = await TeamMember.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!member) return res.status(404).json({ error: 'Not found' });
+    
+    return res.json(member);
+  } catch (error) {
+    return res.status(500).json({ error: 'Server error updating team member' });
+  }
 };

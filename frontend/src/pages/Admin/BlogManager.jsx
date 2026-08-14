@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, Image as ImageIcon, Loader2, X, Search, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
 import AdminLoader from '../../components/AdminLoader';
@@ -83,7 +84,18 @@ const BlogManager = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    const result = await Swal.fire({
+      title: 'Delete Post?',
+      text: "Are you sure you want to delete this post? This action cannot be undone.",
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await api.delete(`/posts/${id}`);
       setPosts(posts.filter(p => p._id !== id));
@@ -123,7 +135,8 @@ const BlogManager = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 text-sm">
               <th className="p-4 font-medium">Post Title</th>
@@ -181,6 +194,7 @@ const BlogManager = () => {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Editor Modal */}

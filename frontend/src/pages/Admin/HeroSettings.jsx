@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
 import AdminLoader from '../../components/AdminLoader';
@@ -46,7 +47,18 @@ const HeroSettings = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this image?')) return;
+    const result = await Swal.fire({
+      title: 'Delete Image?',
+      text: "Are you sure you want to delete this image?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await api.delete(`/hero/${id}`);
       setImages(images.filter(img => img._id !== id));

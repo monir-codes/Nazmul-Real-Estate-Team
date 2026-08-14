@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, ShieldAlert, Fingerprint } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { SECURITY_PASSPHRASE } from '../../config/security';
 import api from '../../utils/api';
 
 const AdminLogin = () => {
@@ -15,7 +16,7 @@ const AdminLogin = () => {
 
     setStatus('checking');
 
-    if (answer.trim().toLowerCase() === 'nazmul builder') {
+    if (answer.trim().toLowerCase() === SECURITY_PASSPHRASE.toLowerCase()) {
       try {
         // Under the hood, authenticate with the actual seeded admin credentials
         const res = await api.post('/auth/login', { 

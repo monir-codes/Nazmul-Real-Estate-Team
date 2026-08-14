@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Mail, Trash2 } from 'lucide-react';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import AdminLoader from '../../components/AdminLoader';
 
@@ -32,7 +33,18 @@ const AdminLeads = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this lead?")) return;
+    const result = await Swal.fire({
+      title: 'Delete Lead?',
+      text: "Are you sure you want to delete this lead?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await api.delete(`/leads/${id}`);
       setLeads(leads.filter(l => l._id !== id));

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Edit, Trash2, Plus, Image as ImageIcon, Loader2, X, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
 import AdminLoader from '../../components/AdminLoader';
@@ -10,9 +11,15 @@ const AdminTeam = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
     name: '', role: '', bio: '', email: '', phone: '', image: ''
   });
+
+  const resetForm = () => {
+    setFormData({ name: '', role: '', bio: '', email: '', phone: '', image: '' });
+    setEditingId(null);
+  };
 
   useEffect(() => {
     fetchTeam();
@@ -30,12 +37,25 @@ const AdminTeam = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this team member?")) return;
+    const result = await Swal.fire({
+      title: 'Delete Team Member?',
+      text: "Are you sure you want to delete this member?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await api.delete(`/team/${id}`);
       setTeam(team.filter(m => m._id !== id));
+      toast.success("Team member removed");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to delete team member");
     }
   };
 
@@ -67,7 +87,7 @@ const AdminTeam = () => {
         setTeam([res.data, ...team]);
         toast.success("Team member added");
       }
-      setIsModalOpen(false);
+      setShowModal(false);
       resetForm();
     } catch (err) {
       console.error(err);
@@ -82,7 +102,7 @@ const AdminTeam = () => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Team Members</h2>
         <button 
-          onClick={() => setShowModal(true)}
+          onClick={() => { resetForm(); setShowModal(true); }}
           className="btn-primary flex items-center shadow-sm"
         >
           <Plus className="w-5 h-5 mr-2" /> Add Member
@@ -100,12 +120,22 @@ const AdminTeam = () => {
             <h3 className="text-xl font-bold text-gray-800">{member.name}</h3>
             <p className="text-accent font-medium text-sm mb-3">{member.role}</p>
             <p className="text-gray-500 text-sm mb-4 line-clamp-3">{member.bio}</p>
-            <button 
-              onClick={() => handleDelete(member._id)}
-              className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors mt-auto"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+            <div className="flex space-x-2 mt-auto">
+              <button 
+                onClick={() => { setFormData(member); setEditingId(member._id); setShowModal(true); }}
+                className="text-gray-400 hover:text-primary p-2 rounded-full hover:bg-gray-50 transition-colors"
+                title="Edit Member"
+              >
+                <Edit className="w-5 h-5" />
+              </button>
+              <button 
+                onClick={() => handleDelete(member._id)}
+                className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
+                title="Delete Member"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         ))}
         {team.length === 0 && <div className="col-span-full text-center p-8 text-gray-500 bg-white rounded-lg border border-dashed">No team members found. Click Add Member.</div>}

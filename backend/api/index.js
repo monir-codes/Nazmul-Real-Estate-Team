@@ -6,7 +6,19 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+
 // Middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.'
+});
+
+app.use(helmet());
+app.use('/api/', limiter);
+
 const allowedOrigins = [
   'http://localhost:5173',
   'https://nazmul-real-estate.vercel.app',

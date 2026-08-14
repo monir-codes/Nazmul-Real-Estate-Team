@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import FloatingDialer from '../components/FloatingDialer';
 
 const PublicLayout = () => {
   return (
@@ -10,6 +11,7 @@ const PublicLayout = () => {
         <Outlet />
       </main>
       <Footer />
+      <FloatingDialer />
     </div>
   );
 };

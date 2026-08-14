@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import { uploadToImgBB } from '../../utils/imgbb';
 import AdminLoader from '../../components/AdminLoader';
@@ -31,7 +32,18 @@ const AdminProperties = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this property?")) return;
+    const result = await Swal.fire({
+      title: 'Delete Property?',
+      text: "Are you sure you want to delete this property? This action cannot be undone.",
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await api.delete(`/properties/${id}`);
       setProperties(properties.filter(p => p._id !== id));
@@ -81,7 +93,7 @@ const AdminProperties = () => {
       });
     } catch (err) {
       console.error("Failed to create property", err);
-      alert("Error adding property");
+      toast.error("Error adding property");
     }
   };
 
@@ -115,7 +127,8 @@ const AdminProperties = () => {
         ) : properties.length === 0 ? (
            <div className="p-8 text-center text-gray-500">No properties found. Add one!</div>
         ) : (
-          <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 text-gray-500 text-sm border-b border-gray-100">
                 <th className="p-4 font-medium">Property</th>
@@ -141,6 +154,7 @@ const AdminProperties = () => {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

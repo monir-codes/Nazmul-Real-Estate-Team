@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Trash2, Ban, UserCheck, Loader2, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 import api from '../../utils/api';
 import AdminLoader from '../../components/AdminLoader';
 
@@ -27,7 +28,17 @@ const AdminUsers = () => {
   }, []);
 
   const handleToggleBan = async (id, currentStatus) => {
-    if (window.confirm(`Are you sure you want to ${currentStatus ? 'unban' : 'ban'} this user?`)) {
+    const result = await Swal.fire({
+      title: `Are you sure?`,
+      text: `Do you want to ${currentStatus ? 'unban' : 'ban'} this user?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#06b6d4',
+      cancelButtonColor: '#ef4444',
+      confirmButtonText: 'Yes, proceed'
+    });
+
+    if (result.isConfirmed) {
       setActionLoading(id);
       try {
         const res = await api.put(`/users/${id}/ban`);
@@ -42,7 +53,17 @@ const AdminUsers = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to permanently delete this user? This action cannot be undone.')) {
+    const result = await Swal.fire({
+      title: 'Delete User?',
+      text: "Are you sure you want to permanently delete this user? This action cannot be undone.",
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!'
+    });
+
+    if (result.isConfirmed) {
       setActionLoading(id);
       try {
         await api.delete(`/users/${id}`);
