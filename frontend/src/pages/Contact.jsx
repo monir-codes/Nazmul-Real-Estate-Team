@@ -24,6 +24,7 @@ const Contact = () => {
     setSubmitting(true);
     setError('');
 
+    let dbSuccess = false;
     try {
       // 1. Save lead to DB via backend API
       await api.post('/leads', {
@@ -35,6 +36,7 @@ const Contact = () => {
               formData.interest === 'Buying' ? 'Buy' : 'General',
         message: formData.message
       });
+      dbSuccess = true;
     } catch (dbErr) {
       console.warn('DB save failed (will still try email):', dbErr);
     }
@@ -61,7 +63,11 @@ const Contact = () => {
       console.error('EmailJS failed:', emailErr);
       // If DB succeeded but email failed, still show success
       // If both failed, show error
-      setError('We couldn\'t send your message right now. Please try again later or contact us directly by phone.');
+      if (dbSuccess) {
+        setSubmitted(true);
+      } else {
+        setError('We couldn\'t send your message right now. Please try again later or contact us directly by phone.');
+      }
     } finally {
       setSubmitting(false);
     }

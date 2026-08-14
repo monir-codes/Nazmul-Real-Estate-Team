@@ -26,6 +26,7 @@ const Valuation = () => {
     setSubmitting(true);
     setError('');
 
+    let dbSuccess = false;
     try {
       // 1. Save lead to DB via backend API
       await api.post('/leads', {
@@ -36,6 +37,7 @@ const Valuation = () => {
         propertyAddress: `${formData.address}, ${formData.city}, ${formData.state} ${formData.zip}`,
         message: `Requested a Home Valuation for: ${formData.address}, ${formData.city}, ${formData.state} ${formData.zip}`
       });
+      dbSuccess = true;
     } catch (dbErr) {
       console.warn('DB save failed (will still try email):', dbErr);
     }
@@ -63,7 +65,11 @@ const Valuation = () => {
       setSubmitted(true);
     } catch (emailErr) {
       console.error('EmailJS failed:', emailErr);
-      setError('We couldn\'t process your request right now. Please try again later or contact us directly.');
+      if (dbSuccess) {
+        setSubmitted(true);
+      } else {
+        setError('We couldn\'t process your request right now. Please try again later or contact us directly.');
+      }
     } finally {
       setSubmitting(false);
     }
