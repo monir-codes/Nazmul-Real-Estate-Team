@@ -37,6 +37,8 @@ exports.deleteTeamMember = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Server error deleting team member' });
   }
+};
+
 // @desc    Update a team member
 // @route   PUT /api/team/:id
 // @access  Private/Admin

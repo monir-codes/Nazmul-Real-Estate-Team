@@ -1,16 +1,19 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, Link, useNavigate, NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare, Image as ImageIcon, Building2, UserPlus, FileText } from 'lucide-react';
+import { LayoutDashboard, Users, Home, Settings, LogOut, MessageSquare, Image as ImageIcon, Building2, UserPlus, FileText, Menu } from 'lucide-react';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (!token) {
       navigate('/admin/login');
     }
+    // Close sidebar on navigation on mobile
+    setIsSidebarOpen(false);
   }, [navigate, location.pathname]);
 
   const handleLogout = () => {
@@ -29,9 +32,14 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
+      {/* Mobile sidebar backdrop */}
+      {isSidebarOpen && (
+        <div className="fixed inset-0 z-20 bg-black/50 lg:hidden" onClick={() => setIsSidebarOpen(false)} />
+      )}
+
       {/* Sidebar */}
-      <div className="w-64 bg-primary text-white flex flex-col">
+      <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-primary text-white flex flex-col transform transition-transform duration-300 lg:relative lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6">
           <Link to="/" className="text-xl font-serif font-bold tracking-tight">
             Nazmul <span className="text-accent">Admin</span>
@@ -64,9 +72,14 @@ const AdminLayout = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-8">
-          <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
+      <div className="flex-1 flex flex-col overflow-hidden w-full relative">
+        <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 lg:px-8 shrink-0">
+          <div className="flex items-center">
+            <button onClick={() => setIsSidebarOpen(true)} className="mr-4 lg:hidden p-2 rounded-md text-gray-500 hover:bg-gray-100">
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="text-xl font-bold text-gray-800">Admin Panel</h1>
+          </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500">Welcome, Admin</span>
             <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white font-bold">
@@ -74,7 +87,7 @@ const AdminLayout = () => {
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-8 bg-gray-50">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-8 bg-gray-50">
           <Outlet />
         </main>
       </div>

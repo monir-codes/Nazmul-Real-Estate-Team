@@ -21,7 +21,7 @@ const BlogManager = () => {
     excerpt: '',
     category: 'Market Update',
     author: 'Nazmul',
-    status: 'published'
+    published: true
   });
 
   useEffect(() => {
@@ -107,7 +107,7 @@ const BlogManager = () => {
   };
 
   const resetForm = () => {
-    setFormData({ title: '', slug: '', content: '', coverImage: '', excerpt: '', category: 'Market Update', author: 'Nazmul', status: 'published' });
+    setFormData({ title: '', slug: '', content: '', coverImage: '', excerpt: '', category: 'Market Update', author: 'Nazmul', published: true });
     setEditingId(null);
   };
 
@@ -171,8 +171,8 @@ const BlogManager = () => {
                   {new Date(post.createdAt).toLocaleDateString()}
                 </td>
                 <td className="p-4">
-                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${post.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                    {post.status.toUpperCase()}
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${post.published ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    {post.published ? 'PUBLISHED' : 'DRAFT'}
                   </span>
                 </td>
                 <td className="p-4 text-right space-x-2">
@@ -224,7 +224,7 @@ const BlogManager = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                      <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                      <select value={formData.published ? 'published' : 'draft'} onChange={e => setFormData({...formData, published: e.target.value === 'published'})} className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
                         <option value="published">Published</option>
                         <option value="draft">Draft</option>
                       </select>
