@@ -37,7 +37,7 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo(0, 0)}>
         <Routes location={location} key={location.pathname}>
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
@@ -45,7 +45,7 @@ function App() {
           <Route path="/buy" element={<PageTransition><Buy /></PageTransition>} />
           <Route path="/sell" element={<PageTransition><Sell /></PageTransition>} />
           <Route path="/listings" element={<PageTransition><Listings /></PageTransition>} />
-          <Route path="/property/:id" element={<PageTransition><PropertyDetails /></PageTransition>} />
+          <Route path="/properties/:id" element={<PageTransition><PropertyDetails /></PageTransition>} />
           <Route path="/valuation" element={<PageTransition><Valuation /></PageTransition>} />
           <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
           <Route path="/about" element={<PageTransition><About /></PageTransition>} />

@@ -64,7 +64,7 @@ const PropertyDetails = () => {
     : ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80'];
 
   return (
-    <div className="pt-24 min-h-screen bg-gray-50 pb-20">
+    <div className="pt-32 min-h-screen bg-gray-50 pb-20">
       <SEO 
         title={`${property.title} | Nazmul Real Estate`} 
         description={property.description}
