@@ -109,13 +109,20 @@ const Buy = () => {
               { icon: DollarSign, title: "Negotiation", desc: "Expert strategy to secure the best possible terms." },
               { icon: Key, title: "Closing", desc: "Seamless coordination through escrow to handing you the keys." }
             ].map((step, index) => (
-              <div key={index} className="text-center p-6">
+              <motion.div 
+                key={index} 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="text-center p-6"
+              >
                 <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6 text-accent shadow-lg">
                   <step.icon className="w-10 h-10" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-800 mb-4">{step.title}</h3>
                 <p className="text-gray-600">{step.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

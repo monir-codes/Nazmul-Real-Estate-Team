@@ -112,7 +112,14 @@ const Sell = () => {
                   { icon: Users, title: "Exclusive Network", desc: "Direct access to our private network of high-net-worth individuals." },
                   { icon: TrendingUp, title: "Data-Driven Pricing", desc: "Advanced analytics to position your home perfectly in the market." }
                 ].map((item, index) => (
-                  <div key={index} className="flex items-start">
+                  <motion.div 
+                    key={index} 
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    className="flex items-start"
+                  >
                     <div className="flex-shrink-0 mt-1">
                       <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-accent">
                         <item.icon className="w-6 h-6" />
@@ -122,7 +129,7 @@ const Sell = () => {
                       <h3 className="text-xl font-bold text-gray-800 mb-2">{item.title}</h3>
                       <p className="text-gray-600">{item.desc}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>

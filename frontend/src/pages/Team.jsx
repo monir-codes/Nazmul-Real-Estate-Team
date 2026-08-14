@@ -43,14 +43,14 @@ const Team = () => {
     const fetchTeam = async () => {
       try {
         const res = await api.get('/team');
-        if (res.data && res.data.length > 0) {
+        if (res.data) {
           setTeamMembers(res.data);
         } else {
-          setTeamMembers(defaultTeamMembers);
+          setTeamMembers([]);
         }
       } catch (error) {
-        console.error("Failed to load team data, using fallback", error);
-        setTeamMembers(defaultTeamMembers);
+        console.error("Failed to load team data", error);
+        setTeamMembers([]);
       } finally {
         setLoading(false);
       }
