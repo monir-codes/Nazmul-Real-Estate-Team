@@ -1,38 +1,72 @@
 # Nazmul Real Estate Team 🏡
 
-Welcome to the official repository for the **Nazmul Real Estate Team** website. This is a full-stack, modern web application designed to help users browse luxury real estate properties, request home valuations, read the latest real estate blog posts, and securely manage their own user profiles. 
+Welcome to the official repository for the **Nazmul Real Estate Team** website. This is an ultra-premium, full-stack MERN application designed to provide a seamless digital experience for luxury real estate clients.
 
-## 🎯 Purpose of the Website
-The primary objective of this platform is to provide a premium, seamless digital experience for clients looking to buy, sell, or invest in real estate. The website serves as a powerful lead-generation tool for the Nazmul Real Estate Team by offering:
-- **Property Listings**: Browse a curated list of active properties.
-- **Home Valuation Engine**: Users can submit their property details for an accurate market valuation.
-- **User Authentication**: Secure Login/Signup with Google OAuth capabilities.
-- **Interactive Blog**: Educational content on real estate trends and advice.
-- **Admin Dashboard**: Full CRUD (Create, Read, Update, Delete) capabilities for the site administrator to manage properties, blog posts, and registered users.
+## 🎯 Platform Highlights
+The platform is engineered to function as both a lead-generation powerhouse and a fully manageable content platform:
+- **Interactive Map Search**: Built-in interactive map powered by `react-leaflet` to visualize property locations in real-time.
+- **Dynamic CMS Page Builder**: The Admin Panel includes a robust "Page Builder" that allows administrators to dynamically update Hero Banners, Global Contact Information, Navigations, and entire text sections on the public website without writing any code.
+- **Security Chamber Login**: A multi-layered authentication system where admins must first bypass a "Security Chamber" (passphrase challenge) before entering standard credentials.
+- **Property Listings**: Browse a curated, dynamic list of active and sold properties.
+- **Home Valuation Engine**: Users can submit property details for market valuation.
+- **Interactive Blog & Team Roster**: Manage educational content and dynamically update the team roster directly from the database.
+- **Smart Floating Dialer**: An integrated call-to-action that pulls the company phone number globally and dynamically hides if no number is configured.
 
 ## 🛠️ Tech Stack & Technologies Used
 
 ### Frontend (Client-Side)
-- **Framework**: React.js (built via Vite for lightning-fast compilation)
-- **Styling**: Tailwind CSS (for modern, responsive, utility-first styling)
-- **Animations**: Framer Motion (for smooth page transitions and premium hover effects)
-- **Icons**: Lucide React (clean, scalable SVG icons)
+- **Framework**: React.js (Vite)
+- **Styling**: Tailwind CSS (Fully responsive, mobile-first design)
+- **Animations**: Framer Motion (Cinematic scroll reveals, staggered lists, and micro-interactions)
+- **Interactive Maps**: React-Leaflet
+- **UX & Alerts**: SweetAlert2 & React Hot Toast (replaces all native browser alerts with professional UI)
+- **Icons**: Lucide React
 - **Routing**: React Router DOM
-- **Notifications**: React Hot Toast (for sleek, interactive toast notifications)
-- **Forms & Email**: EmailJS (to handle real-time contact and valuation inquiries)
 
 ### Backend (Server-Side)
 - **Runtime**: Node.js
 - **Framework**: Express.js
-- **Database**: MongoDB (managed via Mongoose ODM)
-- **Authentication**: JWT (JSON Web Tokens) & Bcrypt.js (for secure password hashing)
-- **CORS & Security**: Express middlewares configured for secure cross-origin requests
+- **Database**: MongoDB (via Mongoose ODM)
+- **Authentication**: JWT (JSON Web Tokens) & Bcrypt.js
+- **CORS & Security**: Helmet, express-rate-limit
 
-### Third-Party Integrations
+### Integrations
 - **Image Hosting**: ImgBB API
-- **Authentication**: Firebase (for Google OAuth)
+- **Forms**: EmailJS (Real-time contact inquiries)
 
-## 🚀 Deployment
-The frontend is designed to be effortlessly deployed on **Vercel** or **Render**. The backend is configured to run on a Node.js hosting platform (such as Render). 
+## 🔑 Default Admin Access
+To access the Admin Panel locally, navigate to `/admin/login`:
+- **Security Passphrase**: `Nazmul is here`
+- **Admin Email**: `admin@nazmulrealestate.com`
+- **Admin Password**: `password123`
 
-**Note**: In order for the forms, authentication, and database connections to work correctly in production, you must set all required environment variables within the hosting provider's dashboard (matching the variables located in `.env.example`).
+## 🚀 Local Development Setup
+
+1. **Install Dependencies**
+   Navigate to both the `backend` and `frontend` directories and run:
+   ```bash
+   npm install
+   ```
+
+2. **Environment Variables**
+   Create a `.env` file in the `backend` and provide your keys:
+   ```env
+   PORT=5000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   ```
+   Create a `.env` in the `frontend`:
+   ```env
+   VITE_API_URL=http://localhost:5000/api
+   VITE_IMGBB_API_KEY=your_imgbb_key
+   ```
+
+3. **Run the Application**
+   In the root directory, run:
+   ```bash
+   npm run dev
+   ```
+   *This uses concurrently to start both the Node server and the Vite frontend simultaneously.*
+
+## 📈 Deployment
+The frontend is optimized for **Vercel** or **Render**, and the backend is ready for Node.js hosting platforms. Ensure all `.env` variables are securely added to your hosting provider's dashboard.
