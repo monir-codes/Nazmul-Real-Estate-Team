@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit, Trash2, Search, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, X, Image as ImageIcon, Loader2, Eye, ExternalLink, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import api from '../../utils/api';
@@ -10,6 +11,7 @@ const AdminProperties = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [viewingProperty, setViewingProperty] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [formData, setFormData] = useState({
@@ -169,8 +171,9 @@ const AdminProperties = () => {
                     </span>
                   </td>
                   <td className="p-4 text-right">
-                    <button onClick={() => openEditModal(p)} className="text-gray-400 hover:text-accent mr-3"><Edit className="w-5 h-5" /></button>
-                    <button onClick={() => handleDelete(p._id)} className="text-gray-400 hover:text-red-500"><Trash2 className="w-5 h-5" /></button>
+                    <button onClick={() => setViewingProperty(p)} className="text-gray-400 hover:text-primary mr-3" title="View Details"><Eye className="w-5 h-5" /></button>
+                    <button onClick={() => openEditModal(p)} className="text-gray-400 hover:text-accent mr-3" title="Edit"><Edit className="w-5 h-5" /></button>
+                    <button onClick={() => handleDelete(p._id)} className="text-gray-400 hover:text-red-500" title="Delete"><Trash2 className="w-5 h-5" /></button>
                   </td>
                 </tr>
               ))}
@@ -297,6 +300,97 @@ const AdminProperties = () => {
                 <button type="submit" className="btn-primary">{editingId ? 'Update Property' : 'Save Property'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Property Details Modal */}
+      {viewingProperty && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+              <h3 className="text-xl font-bold text-gray-800">Property Details</h3>
+              <button onClick={() => setViewingProperty(null)} className="text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <div className="border border-gray-200 rounded-xl overflow-hidden flex flex-col sm:flex-row bg-white shadow-sm">
+                <div className="w-full sm:w-48 h-48 sm:h-auto shrink-0 relative bg-gray-100">
+                  <img 
+                    src={viewingProperty.images?.[0] || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80'} 
+                    alt={viewingProperty.title} 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className={`absolute top-2 left-2 text-white text-xs px-2 py-1 rounded font-medium shadow-sm ${viewingProperty.status === 'For Sale' ? 'bg-green-600' : viewingProperty.status === 'Sold' ? 'bg-blue-600' : 'bg-yellow-600'}`}>
+                    {viewingProperty.status}
+                  </div>
+                </div>
+                <div className="p-5 flex flex-col justify-between flex-grow">
+                  <div>
+                    <h5 className="font-bold text-lg text-gray-900 mb-1">{viewingProperty.title}</h5>
+                    <div className="flex items-center text-gray-500 text-sm mb-3">
+                      <MapPin className="w-4 h-4 mr-1 text-accent" />
+                      {viewingProperty.address}, {viewingProperty.city}, {viewingProperty.state} {viewingProperty.zip}
+                    </div>
+                    <div className="text-2xl font-bold text-primary mb-3">
+                      ${viewingProperty.price?.toLocaleString()}
+                    </div>
+                    <div className="flex space-x-4 text-sm text-gray-600 mb-2">
+                      <span><strong className="text-gray-900">{viewingProperty.beds}</strong> Beds</span>
+                      <span><strong className="text-gray-900">{viewingProperty.baths}</strong> Baths</span>
+                      <span><strong className="text-gray-900">{viewingProperty.sqft?.toLocaleString()}</strong> Sqft</span>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <strong className="text-gray-900 text-xs uppercase tracking-wider block mb-1">Property Type</strong> 
+                      {viewingProperty.propertyType}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {viewingProperty.description && (
+                <div className="mt-6">
+                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Description</h4>
+                  <div className="bg-gray-50 p-4 rounded-lg border border-gray-100 text-gray-700 whitespace-pre-line text-sm leading-relaxed">
+                    {viewingProperty.description}
+                  </div>
+                </div>
+              )}
+
+              {viewingProperty.images?.length > 1 && (
+                <div className="mt-6">
+                  <h4 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Images ({viewingProperty.images.length})</h4>
+                  <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar">
+                    {viewingProperty.images.map((img, idx) => (
+                      <div key={idx} className="w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-gray-200">
+                        <img src={img} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-between items-center sticky bottom-0 z-10">
+              <button 
+                onClick={() => {
+                  setViewingProperty(null);
+                  openEditModal(viewingProperty);
+                }}
+                className="text-gray-600 hover:text-accent font-medium px-4 py-2 transition-colors"
+              >
+                Edit Property
+              </button>
+              <Link 
+                to={`/properties/${viewingProperty._id}`} 
+                target="_blank"
+                className="text-sm font-medium bg-gray-900 hover:bg-gray-800 text-white px-5 py-2.5 rounded-lg transition-colors flex items-center shadow-sm"
+              >
+                View Live Property <ExternalLink className="w-4 h-4 ml-2" />
+              </Link>
+            </div>
           </div>
         </div>
       )}

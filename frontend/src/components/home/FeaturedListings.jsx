@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Heart, Bed, Bath, Square } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../../utils/api';
+import PropertyImageSlider from '../PropertyImageSlider';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -83,12 +84,8 @@ const FeaturedListings = () => {
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
                 className="group rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 border border-gray-100 flex flex-col"
               >
-                <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={listing.images[0]} 
-                    alt={listing.address} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+                <div className="relative h-64 overflow-hidden z-10">
+                  <PropertyImageSlider images={listing.images} title={listing.address} />
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-sm font-medium rounded text-primary shadow-sm">
                     {listing.status}
                   </div>

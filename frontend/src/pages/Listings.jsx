@@ -8,6 +8,7 @@ import L from 'leaflet';
 import SEO from '../components/SEO';
 import api from '../utils/api';
 import { useWishlist } from '../context/WishlistContext';
+import PropertyImageSlider from '../components/PropertyImageSlider';
 
 // Fix leaflet default icon issue in React
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -19,8 +20,6 @@ let DefaultIcon = L.icon({
     iconAnchor: [12, 41]
 });
 L.Marker.prototype.options.icon = DefaultIcon;
-
-// Removed default properties to enforce fully dynamic data fetching as requested.
 
 // Helper component to recenter map when properties change
 function ChangeView({ center, zoom }) {
@@ -202,12 +201,8 @@ const Listings = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-premium transition-shadow group relative"
                   >
-                    <div className="relative h-48 overflow-hidden">
-                      <img 
-                        src={property.images[0]} 
-                        alt={property.title} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                      />
+                    <div className="relative h-48 overflow-hidden z-10">
+                      <PropertyImageSlider images={property.images} title={property.title} />
                       <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
                         {property.status}
                       </div>

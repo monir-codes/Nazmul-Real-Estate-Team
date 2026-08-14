@@ -28,7 +28,8 @@ const Navbar = () => {
           { label: 'Sell', url: '/sell' },
           { label: 'Listings', url: '/listings' },
           { label: 'Our Team', url: '/team' },
-          { label: 'Areas We Serve', url: '/areas' }
+          { label: 'Areas We Serve', url: '/areas' },
+          { label: 'Blog', url: '/blog' }
         ]);
       }
     };
