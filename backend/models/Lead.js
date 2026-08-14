@@ -6,6 +6,7 @@ const leadSchema = new mongoose.Schema({
   phone: { type: String },
   type: { type: String, enum: ['Buy', 'Sell', 'Tour', 'Valuation', 'General'], required: true },
   propertyAddress: { type: String },
+  propertyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Property' },
   message: { type: String },
   status: { type: String, enum: ['New', 'Contacted', 'Qualified', 'Lost'], default: 'New' },
 }, { timestamps: true });

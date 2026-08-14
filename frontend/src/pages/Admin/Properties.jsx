@@ -263,7 +263,8 @@ const AdminProperties = () => {
                       {uploadingImage ? 'Uploading...' : 'Upload Images'}
                       <input type="file" multiple accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploadingImage} />
                     </label>
-                    <div className="flex-grow flex space-x-2">
+                    <span className="text-xs text-gray-400 mt-1 block">Tip: Select multiple files at once!</span>
+                    <div className="flex-grow flex space-x-2 ml-4">
                        <input 
                          type="text" 
                          placeholder="Or paste URL and press Add" 

@@ -38,7 +38,8 @@ const PropertyDetails = () => {
       await api.post('/leads', {
         ...formData,
         type: 'Tour',
-        propertyAddress: property.address
+        propertyAddress: property.address,
+        propertyId: property._id
       });
       setBookingStatus('success');
       setFormData({ name: '', email: '', phone: '', message: '' });

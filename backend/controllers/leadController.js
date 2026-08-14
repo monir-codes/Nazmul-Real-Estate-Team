@@ -2,7 +2,7 @@ const Lead = require('../models/Lead');
 
 const getLeads = async (req, res) => {
   try {
-    const leads = await Lead.find({}).sort({ createdAt: -1 });
+    const leads = await Lead.find({}).sort({ createdAt: -1 }).populate('propertyId');
     return res.json(leads);
   } catch (error) {
     return res.status(500).json({ message: 'Server Error' });
